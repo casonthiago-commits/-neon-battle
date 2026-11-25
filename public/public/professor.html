@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAINEL DO PROFESSOR</title>
+<style>body{margin:0;background:#050510;color:#fff;font-family:'Segoe UI';padding:16px}h1{text-align:center}input,select{width:100%;padding:14px;border-radius:12px;border:none;background:#1a1a35;color:#fff;margin:8px 0;font-size:16px}button{width:100%;padding:15px;border:none;border-radius:14px;font-weight:900;font-size:16px;margin:6px 0} .verde{background:#22c55e;color:#fff}.vermelho{background:#ef4444;color:#fff}.card{background:#ffffff10;border:1px solid #ffffff25;border-radius:20px;padding:16px;margin:10px 0}.pergunta{background:#ffffff10;padding:10px;border-radius:12px;margin:6px 0}</style></head><body>
+<h1>🎯 PAINEL DO PROFESSOR</h1>
+<p style="text-align:center;opacity:.8">NEON BATTLE - Ed. Física<br>Link do jogo: <b>neon-battle-sxm5.onrender.com</b></p>
+<div class="card"><h3>⏰ Tempo da Partida</h3><select id="tempoSel"><option value="2">2 Minutos - Rápido</option><option value="5" selected>5 Minutos - Ideal p/ 20 alunos</option><option value="10">10 Minutos - Prova</option></select><button class="verde" onclick="setTempo()">⏰ SALVAR TEMPO</button></div>
+<div class="card"><h3>➕ Nova Pergunta</h3><input id="perg" placeholder="Ex: Qual esporte usa rede?"><input id="a0" placeholder="Resposta 1 - CORRETA ✅"><input id="a1" placeholder="Resposta 2"><input id="a2" placeholder="Resposta 3"><input id="a3" placeholder="Resposta 4"><button class="verde" onclick="enviar()">✅ ADICIONAR NO JOGO</button><button class="vermelho" onclick="limpar()">🗑️ LIMPAR TODAS E VOLTAR AS PADRÃO</button></div>
+<div class="card"><h3>📚 Perguntas no jogo agora (<span id="total">0</span>)</h3><div id="lista"></div></div>
+<div class="card"><button onclick="iniciar()" style="background:#facc15">▶️ INICIAR PARTIDA</button><button onclick="location.href='/'" style="background:#333;color:#fff">🎮 VER JOGO</button></div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+let socket=io();
+function setTempo(){let m=document.getElementById('tempoSel').value;socket.emit('set-tempo',parseInt(m));alert('⏰ Tempo salvo: '+m+' minutos!')}
+function enviar(){let q=document.getElementById('perg').value;let a=[0,1,2,3].map(i=>document.getElementById('a'+i).value);if(!q||!a[0])return alert('Preencha pergunta e resposta correta!');socket.emit('nova-pergunta',{q,a,c:0});alert('✅ Pergunta adicionada!');document.getElementById('perg').value='';[0,1,2,3].forEach(i=>document.getElementById('a'+i).value='')}
+function limpar(){if(confirm('Limpar tudo?')) socket.emit('limpar-perguntas')}
+function iniciar(){socket.emit('comecar');alert('Partida iniciada!')}
+socket.on('lista-perguntas',lista=>{document.getElementById('total').innerText=lista.length;document.getElementById('lista').innerHTML=lista.map(p=>`<div class="pergunta">❓ ${p.q}<br><b style="color:#22c55e">✅ ${p.a[0]}</b> | ${p.a[1]} | ${p.a[2]} | ${p.a[3]}</div>`).join('')});
+socket.on('tempo-config',t=>{document.getElementById('tempoSel').value=Math.floor(t/60)});
+</script></body></html>
