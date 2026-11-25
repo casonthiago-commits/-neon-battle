@@ -1,9 +1,9 @@
 const express=require('express');const app=express();const http=require('http').createServer(app);const io=require('socket.io')(http);
 app.use(express.static('public'));app.use(express.static(__dirname));
-let jogadores={},iniciado=false,tempo=300,feed=[],tempoPartida=300;
-const MAX_JOGADORES = 30;
+let jogadores={},iniciado=false,tempo=300,feed=[],tempoPartida=300,ultimoDuelo={};
+const MAX_JOGADORES=30;
 
-// --- 120 PERGUNTAS - SEM REPETIR ---
+// ===== 120 PERGUNTAS SEM REPETIR =====
 let perguntas=[
 {q:"Qual esporte usa rede e a bola NÃO pode cair no chão?",a:["Vôlei","Futebol","Basquete","Tênis"],c:0},
 {q:"Quantos jogadores de linha tem o Futsal em quadra por time?",a:["5","11","7","6"],c:0},
@@ -53,26 +53,26 @@ let perguntas=[
 {q:"Qual esporte é lutar com espada?",a:["Esgrima","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é AQUECIMENTO ESPECÍFICO?",a:["Aquecer p/ o esporte que vai jogar","Dormir","Comer","Jogar videogame"],c:0},
 {q:"Qual esporte usa BOLA e CESTA alta?",a:["Basquete","Futebol","Vôlei","Tênis"],c:0},
-{q:"O que é DESAQUECIMENTO / VOLTA À CALMA?",a:["Diminuir o ritmo no final","Correr mais","Dormir no meio","Comer"],c:0},
+{q:"O que é VOLTA À CALMA?",a:["Diminuir o ritmo no final","Correr mais","Dormir no meio","Comer"],c:0},
 {q:"Qual esporte é andar de SKATE?",a:["Skate","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é IMPULSÃO?",a:["Força para saltar","Ser alto","Dormir","Comer"],c:0},
 {q:"Qual esporte é SURFAR nas ondas?",a:["Surfe","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é LATERALIDADE?",a:["Usar lado direito e esquerdo","Ser forte","Correr rápido","Pular alto"],c:0},
 {q:"Qual esporte usa BOLA OVAL?",a:["Rugby","Futebol","Vôlei","Basquete"],c:0},
 {q:"O que é ESPORTE COLETIVO?",a:["Jogado em equipe","Sozinho","Com 1 pessoa","Sem regra"],c:0},
-{q:"Qual esporte é jogar VÔLEI DE PRAIA?",a:["Vôlei de Praia","Futebol","Basquete","Judô"],c:0},
+{q:"Qual esporte é VÔLEI DE PRAIA?",a:["Vôlei de Praia","Futebol","Basquete","Judô"],c:0},
 {q:"O que é ESPORTE INDIVIDUAL?",a:["Praticado sozinho","Em equipe","Com 11","Sem regra"],c:0},
 {q:"Qual esporte usa REDE e PETECA?",a:["Badminton","Futebol","Vôlei","Basquete"],c:0},
 {q:"O que é FAIR PLAY?",a:["Jogo limpo, respeito","Trapacear","Xingar","Empurrar"],c:0},
 {q:"Qual esporte é CORRER 100m?",a:["Atletismo","Futebol","Vôlei","Judô"],c:0},
-{q:"O que é REGRAS do jogo?",a:["Combinados para jogar justo","Bagunça","Sem limite","Vale tudo"],c:0},
-{q:"Qual esporte usa GOL com as mãos?",a:["Handebol","Futebol","Vôlei","Tênis"],c:0},
+{q:"O que são REGRAS do jogo?",a:["Combinados para jogar justo","Bagunça","Sem limite","Vale tudo"],c:0},
+{q:"Qual esporte é fazer GOL com as mãos?",a:["Handebol","Futebol","Vôlei","Tênis"],c:0},
 {q:"O que é TRABALHO EM EQUIPE?",a:["Ajudar o time","Jogar sozinho","Não passar a bola","Xingar"],c:0},
 {q:"Qual esporte é GINÁSTICA com fita?",a:["Ginástica Rítmica","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é SUPERAÇÃO?",a:["Vencer seus limites","Desistir","Faltar","Dormir"],c:0},
-{q:"Qual esporte é LUTAR com luvas e chutes?",a:["Muay Thai","Futebol","Vôlei","Tênis"],c:0},
+{q:"Qual esporte é lutar com luvas e chutes?",a:["Muay Thai","Futebol","Vôlei","Tênis"],c:0},
 {q:"O que é DISCIPLINA no esporte?",a:["Seguir treino e regras","Faltar sempre","Chegar atrasado","Bagunçar"],c:0},
-{q:"Qual esporte é JOGAR XADREZ?",a:["Xadrez","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é jogar XADREZ?",a:["Xadrez","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é CONCENTRAÇÃO?",a:["Focar na atividade","Ficar distraído","Conversar","Mexer no celular"],c:0},
 {q:"Qual esporte é ANDAR A CAVALO?",a:["Hipismo","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é RESPEITO ao adversário?",a:["Cumprimentar e não xingar","Xingar","Empurrar","Trapacear"],c:0},
@@ -80,99 +80,106 @@ let perguntas=[
 {q:"O que é ALIMENTAÇÃO SAUDÁVEL?",a:["Comer frutas, legumes e beber água","Só comer doce","Só beber refri","Pular refeição"],c:0},
 {q:"Qual esporte é ESCALAR parede?",a:["Escalada","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é SONO para o atleta?",a:["Descansar para recuperar","Ficar acordado","Jogar a noite toda","Não dormir"],c:0},
-{q:"Qual esporte é JOGAR TÊNIS DE MESA?",a:["Tênis de Mesa","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é TÊNIS DE MESA?",a:["Tênis de Mesa","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é LESÃO?",a:["Machucado no corpo","Vitória","Gol","Ponto"],c:0},
 {q:"Qual esporte é DANÇAR?",a:["Dança","Futebol","Vôlei","Judô"],c:0},
 {q:"O que fazer quando se machuca?",a:["Avisar o professor e parar","Continuar jogando","Esconder","Correr mais"],c:0},
-{q:"Qual esporte é JOGAR QUEIMADA?",a:["Queimada","Futebol","Vôlei","Basquete"],c:0},
+{q:"Qual esporte é jogar QUEIMADA?",a:["Queimada","Futebol","Vôlei","Basquete"],c:0},
 {q:"O que é AQUECIMENTO GERAL?",a:["Aquecer o corpo todo","Só o braço","Só dormir","Só comer"],c:0},
-{q:"Qual esporte é JOGAR FUTSAL?",a:["Futsal","Tênis","Vôlei","Judô"],c:0},
+{q:"Qual esporte é jogar FUTSAL?",a:["Futsal","Tênis","Vôlei","Judô"],c:0},
 {q:"O que é VELOCIDADE DE REAÇÃO?",a:["Responder rápido a um estímulo","Ser alto","Ser forte","Dormir"],c:0},
-{q:"Qual esporte é JOGAR BASQUETE 3x3?",a:["Basquete 3x3","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é BASQUETE 3x3?",a:["Basquete 3x3","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é POTÊNCIA?",a:["Força + velocidade juntas","Só força","Só dormir","Só comer"],c:0},
-{q:"Qual esporte é JOGAR VÔLEI SENTADO?",a:["Vôlei Sentado","Futebol","Basquete","Judô"],c:0},
+{q:"Qual esporte é VÔLEI SENTADO?",a:["Vôlei Sentado","Futebol","Basquete","Judô"],c:0},
 {q:"O que é INCLUSÃO no esporte?",a:["Todos podem jogar","Só os melhores","Só meninos","Só meninas"],c:0},
-{q:"Qual esporte é CORRER MARATONA?",a:["Atletismo","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é correr MARATONA?",a:["Atletismo","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é ESTRATÉGIA?",a:["Plano para vencer","Bagunça","Sem plano","Jogar sozinho"],c:0},
-{q:"Qual esporte é JOGAR HÓQUEI?",a:["Hóquei","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é jogar HÓQUEI?",a:["Hóquei","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é TÁTICA?",a:["Como o time joga","Ser alto","Ser forte","Dormir"],c:0},
-{q:"Qual esporte é JOGAR GOLFE?",a:["Golfe","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é jogar GOLFE?",a:["Golfe","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é TÉCNICA?",a:["Jeito certo de fazer o movimento","Bagunça","Força bruta","Sem treino"],c:0},
-{q:"Qual esporte é JOGAR CRÍQUETE?",a:["Críquete","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é jogar CRÍQUETE?",a:["Críquete","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é TREINO?",a:["Praticar para melhorar","Faltar","Dormir","Jogar videogame"],c:0},
-{q:"Qual esporte é JOGAR POLO?",a:["Polo","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é jogar POLO?",a:["Polo","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é AQUECIMENTO ARTICULAR?",a:["Mexer as articulações","Dormir","Comer","Correr sem parar"],c:0},
-{q:"Qual esporte é JOGAR BEACH TENNIS?",a:["Beach Tennis","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é BEACH TENNIS?",a:["Beach Tennis","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é ARTICULAÇÃO?",a:["Junção dos ossos","Músculo","Pele","Cabelo"],c:0},
-{q:"Qual esporte é JOGAR FRESCOBOL?",a:["Frescobol","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é FRESCOBOL?",a:["Frescobol","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é MÚSCULO?",a:["Parte do corpo que faz força","Osso","Pele","Unha"],c:0},
-{q:"Qual esporte é JOGAR CAPOEIRA?",a:["Capoeira","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é CAPOEIRA?",a:["Capoeira","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é OSSO?",a:["Estrutura que sustenta o corpo","Músculo","Pele","Cabelo"],c:0},
-{q:"Qual esporte é JOGAR KARATÊ?",a:["Karatê","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é KARATÊ?",a:["Karatê","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é CORAÇÃO?",a:["Órgão que bombeia sangue","Osso","Músculo da perna","Pele"],c:0},
-{q:"Qual esporte é JOGAR TAEKWONDO?",a:["Taekwondo","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é TAEKWONDO?",a:["Taekwondo","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é PULMÃO?",a:["Órgão que respira","Osso","Músculo","Pele"],c:0},
-{q:"Qual esporte é JOGAR JIU-JITSU?",a:["Jiu-Jitsu","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é JIU-JITSU?",a:["Jiu-Jitsu","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é CÉREBRO?",a:["Comanda o corpo","Osso","Músculo","Pele"],c:0},
-{q:"Qual esporte é JOGAR FUTEBOL AMERICANO?",a:["Futebol Americano","Futebol","Vôlei","Judô"],c:0},
-{q:"O que é ENERGIA para o corpo?",a:["Vem dos alimentos","Vem do sono só","Vem do celular","Vem da TV"],c:0},
-{q:"Qual esporte é JOGAR VÔLEI DE AREIA?",a:["Vôlei de Praia","Futebol","Basquete","Judô"],c:0},
+{q:"Qual esporte é FUTEBOL AMERICANO?",a:["Futebol Americano","Futebol","Vôlei","Judô"],c:0},
+{q:"De onde vem a ENERGIA para o corpo?",a:["Dos alimentos","Do sono só","Do celular","Da TV"],c:0},
+{q:"Qual esporte é VÔLEI DE AREIA?",a:["Vôlei de Praia","Futebol","Basquete","Judô"],c:0},
 {q:"O que é PROTEÍNA?",a:["Ajuda a construir músculo","Só açúcar","Só gordura","Só água"],c:0},
-{q:"Qual esporte é JOGAR HANDBOL DE AREIA?",a:["Handebol de Praia","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é HANDEBOL DE AREIA?",a:["Handebol de Praia","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é CARBOIDRATO?",a:["Dá energia","Só proteína","Só água","Só vitamina"],c:0},
-{q:"Qual esporte é JOGAR FUTVÔLEI?",a:["Futevôlei","Futebol","Basquete","Judô"],c:0},
+{q:"Qual esporte é FUTVÔLEI?",a:["Futevôlei","Futebol","Basquete","Judô"],c:0},
 {q:"O que é VITAMINA?",a:["Ajuda o corpo a funcionar","Só açúcar","Só sal","Só gordura"],c:0},
-{q:"Qual esporte é JOGAR PING PONG?",a:["Tênis de Mesa","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é PING PONG?",a:["Tênis de Mesa","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é MINERAL?",a:["Como cálcio, ferro","Só açúcar","Só água","Só gordura"],c:0},
-{q:"Qual esporte é JOGAR QUEIMADA COM 2 BOLAS?",a:["Queimada","Futebol","Vôlei","Basquete"],c:0},
 {q:"O que é OBESIDADE?",a:["Excesso de peso que prejudica saúde","Ser forte","Ser alto","Ser rápido"],c:0},
-{q:"Qual esporte é JOGAR PEGA-PEGA?",a:["Pega-Pega","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é PEGA-PEGA?",a:["Pega-Pega","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é PRESSÃO ARTERIAL?",a:["Força do sangue nas artérias","Peso","Altura","Força do chute"],c:0},
-{q:"Qual esporte é JOGAR ESCONDE-ESCONDE?",a:["Esconde-Esconde","Futebol","Vôlei","Judô"],c:0},
+{q:"Qual esporte é ESCONDE-ESCONDE?",a:["Esconde-Esconde","Futebol","Vôlei","Judô"],c:0},
 {q:"O que é DIABETES?",a:["Problema com açúcar no sangue","Ser forte","Ser alto","Ser rápido"],c:0},
 ];
-// --- SISTEMA SEM REPETIR ---
+
+// ===== SEM REPETIR + EMBARALHA ALTERNATIVAS =====
 let filaPerguntas=[];
 function embaralharPerguntas(){
   filaPerguntas=[...perguntas];
-  for(let i=filaPerguntas.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [filaPerguntas[i],filaPerguntas[j]]=[filaPerguntas[j],filaPerguntas[i]]; }
+  for(let i=filaPerguntas.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[filaPerguntas[i],filaPerguntas[j]]=[filaPerguntas[j],filaPerguntas[i]];}
 }
 function proximaPergunta(){
   if(filaPerguntas.length===0) embaralharPerguntas();
   let p=filaPerguntas.pop();
-  // Embaralha as alternativas também, para não ficar sempre a 1ª certa
   let alts=[...p.a]; let corretaTexto=p.a[p.c];
-  for(let i=alts.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [alts[i],alts[j]]=[alts[j],alts[i]]; }
-  let novoC=alts.indexOf(corretaTexto);
-  return {q:p.q,a:alts,c:novoC};
+  for(let i=alts.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[alts[i],alts[j]]=[alts[j],alts[i]];}
+  return {q:p.q,a:alts,c:alts.indexOf(corretaTexto)};
 }
 embaralharPerguntas();
-
-function enviarEstado(){ io.emit('estado',{jogadores,iniciado,tempo,feed,total:Object.keys(jogadores).length,max:MAX_JOGADORES,restam:filaPerguntas.length}); }
+function enviarEstado(){io.emit('estado',{jogadores,iniciado,tempo,feed,total:Object.keys(jogadores).length,max:MAX_JOGADORES,restam:filaPerguntas.length});}
 io.on('connection',socket=>{
   socket.on('entrar',d=>{
-    if(Object.keys(jogadores).length>=MAX_JOGADORES){ socket.emit('lotado'); return; }
+    if(Object.keys(jogadores).length>=MAX_JOGADORES){socket.emit('lotado');return;}
     jogadores[socket.id]={id:socket.id,nome:d.nome||'Player',skin:d.skin||'🦊',pontos:0,acertos:0,erros:0,x:Math.random()*700+50,y:Math.random()*400+50};
-    feed.unshift(`🟢 ${d.nome} entrou! (${Object.keys(jogadores).length}/${MAX_JOGADORES})`); feed=feed.slice(0,20);
-    enviarEstado();
+    feed.unshift(`🟢 ${d.nome} entrou! (${Object.keys(jogadores).length}/${MAX_JOGADORES})`);feed=feed.slice(0,20);enviarEstado();
   });
-  socket.on('mover',pos=>{ if(jogadores[socket.id]){ jogadores[socket.id].x=pos.x; jogadores[socket.id].y=pos.y; } });
-  socket.on('comecar',()=>{ iniciado=true; tempo=tempoPartida; embaralharPerguntas(); feed.unshift('🔥 PARTIDA COMEÇOU! 120 perguntas sem repetir!'); io.emit('comecou'); enviarEstado(); });
-  socket.on('pedir-duelo',idAlvo=>{
-    let alvo=jogadores[idAlvo], eu=jogadores[socket.id]; if(!alvo||!eu) return;
-    let p=proximaPergunta();
-    socket.emit('duelo',{pergunta:p,oponente:alvo.nome,alvoId:idAlvo});
-    feed.unshift(`🏃 ${eu.nome} PEGOU ${alvo.nome}! Duelo! Restam ${filaPerguntas.length} perguntas`);
-    enviarEstado();
+  // MOVER + ENCOSTOU = DUELO AUTOMÁTICO
+  socket.on('mover',pos=>{
+    if(!jogadores[socket.id])return;
+    jogadores[socket.id].x=pos.x;jogadores[socket.id].y=pos.y;
+    if(!iniciado)return;
+    let agora=Date.now();
+    if(agora-(ultimoDuelo[socket.id]||0)<5000)return;
+    for(let idAlvo in jogadores){
+      if(idAlvo===socket.id)continue;
+      let alvo=jogadores[idAlvo],eu=jogadores[socket.id];
+      let dist=Math.sqrt(Math.pow(eu.x-alvo.x,2)+Math.pow(eu.y-alvo.y,2));
+      if(dist<70){
+        ultimoDuelo[socket.id]=agora;ultimoDuelo[idAlvo]=agora;
+        let p=proximaPergunta();
+        socket.emit('duelo',{pergunta:p,oponente:alvo.nome,alvoId:idAlvo});
+        feed.unshift(`🏃 ${eu.nome} ENCOSTOU em ${alvo.nome}! DUELO!`);feed=feed.slice(0,20);enviarEstado();break;
+      }
+    }
   });
+  socket.on('comecar',()=>{iniciado=true;tempo=tempoPartida;embaralharPerguntas();ultimoDuelo={};feed.unshift('🔥 PARTIDA COMEÇOU! Encoste em alguém!');io.emit('comecou');enviarEstado();});
   socket.on('responder',d=>{
-    let eu=jogadores[socket.id]; if(!eu) return;
-    if(d.correta){ eu.pontos+=100; eu.acertos++; feed.unshift(`✅ ${eu.nome} acertou! +100 | Total: ${eu.acertos} acertos`); socket.emit('duelo-fim',{resultado:'ganhou',pontos:eu.pontos,acertos:eu.acertos}); }
-    else { eu.erros++; feed.unshift(`❌ ${eu.nome} errou - continua no jogo!`); socket.emit('duelo-fim',{resultado:'errou',pontos:eu.pontos,acertos:eu.acertos}); }
+    let eu=jogadores[socket.id];if(!eu)return;
+    if(d.correta){eu.pontos+=100;eu.acertos++;feed.unshift(`✅ ${eu.nome} acertou! +100 | ${eu.acertos} acertos`);socket.emit('duelo-fim',{resultado:'ganhou',pontos:eu.pontos,acertos:eu.acertos});}
+    else{eu.erros++;feed.unshift(`❌ ${eu.nome} errou - continua jogando!`);socket.emit('duelo-fim',{resultado:'errou',pontos:eu.pontos,acertos:eu.acertos});}
     enviarEstado();
   });
-  socket.on('nova-pergunta',d=>{ if(d.q&&d.a) perguntas.unshift({q:d.q,a:d.a,c:0}); });
-  socket.on('disconnect',()=>{ if(jogadores[socket.id]){ feed.unshift(`👋 ${jogadores[socket.id].nome} saiu`); delete jogadores[socket.id]; enviarEstado(); } });
+  socket.on('nova-pergunta',d=>{if(d.q&&d.a)perguntas.unshift({q:d.q,a:d.a,c:0});});
+  socket.on('disconnect',()=>{if(jogadores[socket.id]){feed.unshift(`👋 ${jogadores[socket.id].nome} saiu`);delete jogadores[socket.id];enviarEstado();}});
 });
-setInterval(()=>{ if(iniciado && tempo>0){ tempo--; if(tempo===0){ iniciado=false; let ranking=Object.values(jogadores).sort((a,b)=> b.pontos - a.pontos || b.acertos - a.acertos).slice(0,3); io.emit('podio',ranking); } } enviarEstado(); },1000);
-let PORT=process.env.PORT||3000; http.listen(PORT,()=>console.log('PEGA E RESPONDE - 120 perguntas sem repetir - porta '+PORT));
+setInterval(()=>{if(iniciado&&tempo>0){tempo--;if(tempo===0){iniciado=false;let ranking=Object.values(jogadores).sort((a,b)=>b.pontos-a.pontos||b.acertos-a.acertos).slice(0,3);io.emit('podio',ranking);}}enviarEstado();},1000);
+let PORT=process.env.PORT||3000;http.listen(PORT,()=>console.log('PEGA E RESPONDE v7 - 30 jogadores - 120 perguntas - porta '+PORT));
