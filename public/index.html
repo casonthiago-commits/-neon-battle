@@ -27,8 +27,7 @@ function proximaPerguntaSolo(){
   let alts=[...p.a]; let corretaTexto=p.a[p.c];
   for(let i=alts.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[alts[i],alts[j]]=[alts[j],alts[i]];}
   return {q:p.q,a:alts,c:alts.indexOf(corretaTexto)};
-}
-let skins=['🦊','🐲','⚽','🏀','🏐','🥋','🏋️','🤸','🏃','🚴','🦁','🦸'];let div=document.getElementById('skins');skins.forEach(s=>{let b=document.createElement('div');b.className='skin'+(s==='🦊'?' sel':'');b.innerText=s;b.onclick=()=>{minhaSkin=s;if(navigator.vibrate)navigator.vibrate(10);document.querySelectorAll('.skin').forEach(e=>e.classList.remove('sel'));b.classList.add('sel')};div.appendChild(b)});
+}let skins=['🦊','🐲','⚽','🏀','🏐','🥋','🏋️','🤸','🏃','🚴','🦁','🦸','🐯','🐺','🦄','🐼','🦖','👽','🤖','👾','🦾','🛸','🧙','🧛','🧚','🥷','👑','🎃','😎','🤠','👩‍🚀','👨‍🚀','🏄','🏊','⛹️','🤾'];];let div=document.getElementById('skins');skins.forEach(s=>{let b=document.createElement('div');b.className='skin'+(s==='🦊'?' sel':'');b.innerText=s;b.onclick=()=>{minhaSkin=s;if(navigator.vibrate)navigator.vibrate(10);document.querySelectorAll('.skin').forEach(e=>e.classList.remove('sel'));b.classList.add('sel')};div.appendChild(b)});
 function copiarLink(){let l=location.origin+'?sala='+document.getElementById('codigo').value;navigator.clipboard.writeText(l).then(()=>alert('🔗 Link copiado! Manda no WhatsApp!'))}
 function entrar(){modo='turma';meuNome=document.getElementById('nome').value||'Player';if(navigator.vibrate)navigator.vibrate([20,30,20]);socket.emit('entrar',{nome:meuNome,skin:minhaSkin});document.getElementById('menu').style.display='none';document.getElementById('jogo').style.display='block';window.scrollTo(0,0)}
 function comecar(){socket.emit('comecar')}
