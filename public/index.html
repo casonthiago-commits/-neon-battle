@@ -1,325 +1,94 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PEGA E RESPONDE - PEGA-PEGA + VIDAS</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
-body{background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
-.topo{display:flex;justify-content:space-between;padding:12px 16px;font-size:12px;font-weight:800}
-.badge{background:#ff2d78;padding:6px 12px;border-radius:20px}
-.badge2{background:#222;padding:6px 12px;border-radius:20px}
-.hero{text-align:center;padding:10px}
-.hero small{background:#1a3d2e;color:#7CFFB2;padding:6px 14px;border-radius:20px;font-weight:800}
-.hero h1{font-size:52px;line-height:.9;margin:14px 0 6px;text-shadow:0 0 20px #00f0ff}
-.hero h1 span{color:#00f0ff}
-.hero p{color:#FFD700;font-weight:800}
-.hero p:last-child{color:#ccc;font-weight:400;font-size:13px}
-.card{background:#1a1a2e;border:1px solid #333;border-radius:20px;max-width:480px;margin:16px auto;padding:18px}
-label{font-size:11px;letter-spacing:1px;opacity:.8;font-weight:800;display:block;margin:14px 0 6px}
-input{width:100%;background:#0f0f1f;border:1px solid #333;color:#fff;padding:12px;border-radius:12px;font-size:16px;font-weight:700;outline:none}
-.modos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.modo{border:2px solid #333;background:#0f0f1f;border-radius:14px;padding:12px;cursor:pointer;text-align:center}
-.modo.ativo{border-color:#00f0ff;background:#002a33;box-shadow:0 0 15px #00f0ff55}
-.modo.ativo-vidas{border-color:#ff2d78!important;background:#2a0a1a!important;box-shadow:0 0 15px #ff2d7855!important}
-.modo b{display:block;font-size:14px}
-.modo span{font-size:11px;opacity:.7}
-.vidas-config{display:none;background:#2a0a1a;border:1px dashed #ff2d78;border-radius:12px;padding:10px;margin-top:10px;text-align:center}
-.vidas-config.mostrar{display:block}
-.vidas-config button{background:#222;color:#fff;border:1px solid #444;padding:8px 14px;border-radius:20px;font-weight:800;cursor:pointer;margin:0 4px}
-.vidas-config button.ativo{background:#ff2d78;border-color:#ff2d78}
-.personagens{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.pers{background:#252545;border:2px solid #333;border-radius:12px;font-size:26px;padding:10px 0;text-align:center;cursor:pointer}
-.pers.ativo{border-color:#00ff88;box-shadow:0 0 12px #00ff8855;transform:scale(1.05)}
-.btn{background:#00f0c8;color:#00332a;font-weight:900;border:none;width:100%;padding:16px;border-radius:14px;font-size:16px;cursor:pointer;margin-top:16px}
-.btn2{background:#ff2d78;color:#fff;font-weight:900;border:none;padding:10px 16px;border-radius:10px;cursor:pointer}
-#arena{display:none;max-width:900px;margin:0 auto;padding:14px}
-.hud{display:flex;justify-content:space-between;align-items:center;background:#1a1a2e;padding:12px 16px;border-radius:14px;flex-wrap:wrap;gap:8px}
-.vidas{font-size:24px;letter-spacing:2px}
-.vidas .perdida{opacity:.2;filter:grayscale(1)}
-#canvasWrap{position:relative;background:#0f2a1a;border:3px solid #00ff88;border-radius:16px;overflow:hidden;margin:14px 0}
-canvas{width:100%;height:420px;display:block;background:radial-gradient(circle at 50% 50%, #1a4d2e 0%, #0f2a1a 70%)}
-#pegouMsg{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#ff2d78;padding:8px 16px;border-radius:20px;font-weight:900;display:none;z-index:10;animation:tremer .4s}
-#perguntaBox{display:none;background:#fff;color:#111;padding:20px;border-radius:16px;margin:14px 0;text-align:center}
-#perguntaBox h2{font-size:22px}
-.alts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.alt{background:#252545;border:2px solid #333;color:#fff;padding:16px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer}
-.alt:hover{border-color:#00f0ff}
-.alt.errada{background:#ff2d78!important;animation:tremer .4s}
-.alt.certa{background:#00c853!important}
-@keyframes tremer{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.controles{display:flex;gap:10px;justify-content:center;margin:10px 0}
-.controles button{background:#252545;border:1px solid #444;color:#fff;width:60px;height:60px;border-radius:50%;font-size:22px;cursor:pointer}
-.rank{background:#1a1a2e;padding:14px;border-radius:14px;margin-top:14px}
-#eliminado{display:none;text-align:center;padding:40px 20px}
-#eliminado h1{font-size:48px}
-@media(max-width:600px){.alts{grid-template-columns:1fr}.hero h1{font-size:40px}canvas{height:320px}}
-</style>
-</head>
-<body>
-
-<!-- TELA INICIAL -->
-<div id="inicio">
-<div class="topo"><span class="badge">🔴 AO VIVO • 30 ALUNOS</span><span class="badge2">v14.0 ✨ PEGA-PEGA + VIDAS</span></div>
-<div class="hero"><small>🏃 EDUCAÇÃO FÍSICA • PEGA-PEGA</small><h1>PEGA<br><span>E RESPONDE ⚡</span></h1><p>Encostou? Responde e ganha +100!</p><p>1000 perguntas sem repetir • Fuja do pegador!</p></div>
-<div class="card">
-<label>👤 SEU NICK</label>
-<input id="nick" value="Player1" maxlength="12">
-<label>🎮 MODO DE JOGO</label>
-<div class="modos">
-<div class="modo ativo" id="modoClassico" onclick="setModo('classico')"><b>♾️ SEM ELIMINAÇÃO</b><span>Todo mundo joga até o fim<br>Jeito antigo, que você já tinha</span></div>
-<div class="modo" id="modoVidas" onclick="setModo('vidas')"><b>❤️ COM VIDAS</b><span>Errou, perde vida!<br>Perdeu tudo = arquibancada</span></div>
-</div>
-<div class="vidas-config" id="configVidas">
-<b>Quantas vidas?</b><br><br>
-<button onclick="setVidas(1,this)">❤️ 1</button>
-<button onclick="setVidas(3,this)" class="ativo">❤️❤️❤️ 3</button>
-<button onclick="setVidas(5,this)">❤️❤️❤️❤️❤️ 5</button>
-<p style="font-size:11px;opacity:.7;margin-top:8px">Professor pode reviver quem foi eliminado!</p>
-</div>
-<label>🎭 ESCOLHA SEU PERSONAGEM</label>
-<div class="personagens" id="personagens"></div>
-<label>🔑 CÓDIGO DA SALA</label>
-<input id="sala" value="NEON1">
-<button class="btn" onclick="entrar()">▶ ENTRAR NA ARENA - TURMA</button>
-<p style="text-align:center;font-size:12px;opacity:.6;margin-top:10px">Use as SETAS ou WASD no PC • No celular use os botões 👇</p>
-</div>
-</div>
-
-<!-- ARENA PEGA-PEGA -->
-<div id="arena">
-<div class="hud">
-<span>👤 <b id="hudNick">Player1</b> <span id="hudPers">🦊</span></span>
-<span class="vidas" id="hudVidas">♾️</span>
-<span>⭐ <b id="pontos">0</b> pts</span>
-<span>🎯 <b id="acertos">0</b></span>
-<span>⏱️ <b id="tempo">60</b>s</span>
-</div>
-<div id="canvasWrap">
-<div id="pegouMsg">😱 VOCÊ FOI PEGO! RESPONDE!</div>
-<canvas id="game" width="800" height="420"></canvas>
-</div>
-<div style="text-align:center;font-weight:800;color:#7CFFB2" id="statusJogo">🏃 FUJA DO PEGADOR 🔴 • Pegue as ⭐ pra ganhar pontos!</div>
-
-<div id="perguntaBox">
-<h2 id="textoPergunta">Pergunta...</h2>
-<p style="opacity:.6;font-size:13px;margin-top:6px">Acertou = escapa +100 pts! Errou = perde vida (se tiver no modo vidas)</p>
-<div class="alts" id="alts"></div>
-</div>
-
-<div class="controles">
-<button onclick="mover('up')">⬆️</button>
-</div>
-<div class="controles">
-<button onclick="mover('left')">⬅️</button>
-<button onclick="mover('down')">⬇️</button>
-<button onclick="mover('right')">➡️</button>
-</div>
-<div class="rank">🏆 <b>RANKING AO VIVO</b> <span id="rankList" style="float:right">Você: 1º • 0 pts</span></div>
-<button class="btn" style="background:#333;color:#fff" onclick="location.reload()">⬅ Sair da Arena</button>
-</div>
-
-<!-- ELIMINADO -->
-<div id="eliminado">
-<h1>💀 ELIMINADO!</h1>
-<p style="font-size:18px;margin:12px 0">Suas vidas acabaram!<br>Você foi pra <b>ARQUIBANCADA</b> 👀</p>
-<p style="opacity:.7">Assista os colegas e torça! O professor pode te reviver.</p>
-<button class="btn" style="max-width:300px" onclick="pedirReviver()">✨ PEDIR REVIVER PRO PROFESSOR</button>
-<button class="btn" style="max-width:300px;background:#333;color:#fff" onclick="location.reload()">🔄 Jogar de novo</button>
-<div id="msgReviver" style="margin-top:12px;color:#00ff88;font-weight:800"></div>
-</div>
-
-<script>
-// ===== CONFIG MODO / VIDAS =====
-let modo='classico', totalVidas=3, vidas=3, pontos=0, acertos=0, pers='🦊', tempo=60, jogoRodando=false, foiPego=false;
-const emojis=['🦊','🧚','⚽','🏀','🏐','👕','🏋️','🤸','🏃','🏄','🦁','👨‍🏫','🐯','🐺','🦄','🐼','🦖','👽','🤖','👾','💪','🛸','🏊','🤾','🧑‍🚀','👩‍🏫','🏄','🏊','🤾','🏃'];
-const persDiv=document.getElementById('personagens');
-emojis.forEach((e,i)=>{
-  let d=document.createElement('div'); d.className='pers'+(i==0?' ativo':''); d.textContent=e;
-  d.onclick=()=>{document.querySelectorAll('.pers').forEach(p=>p.classList.remove('ativo')); d.classList.add('ativo'); pers=e;};
-  persDiv.appendChild(d);
-});
-function setModo(m){
-  modo=m;
-  document.getElementById('modoClassico').classList.toggle('ativo',m=='classico');
-  document.getElementById('modoClassico').classList.remove('ativo-vidas');
-  document.getElementById('modoVidas').classList.toggle('ativo',m=='vidas');
-  document.getElementById('modoVidas').classList.toggle('ativo-vidas',m=='vidas');
-  document.getElementById('configVidas').classList.toggle('mostrar',m=='vidas');
-}
-function setVidas(n,btn){
-  totalVidas=n; vidas=n;
-  document.querySelectorAll('#configVidas button').forEach(b=>b.classList.remove('ativo'));
-  btn.classList.add('ativo');
-}
-function atualizarVidas(){
-  if(modo=='classico'){ document.getElementById('hudVidas').textContent='♾️'; return; }
-  let html='';
-  for(let i=0;i<totalVidas;i++) html+=`<span class="${i<vidas?'':'perdida'}">❤️</span>`;
-  document.getElementById('hudVidas').innerHTML=html;
-}
-
-// ===== PERGUNTAS =====
-const perguntas=[
- {p:"Qual esporte usa bola e o objetivo é fazer gol com os pés?", alts:["Futebol","Basquete","Vôlei","Tênis"], certa:0},
- {p:"Quantos jogadores tem em quadra em cada time no futsal?", alts:["5","7","11","3"], certa:0},
- {p:"Qual parte do corpo NÃO pode usar no futebol (exceto goleiro)?", alts:["Mão","Pé","Cabeça","Peito"], certa:0},
- {p:"O que é aquecimento?", alts:["Preparar o corpo","Dormir","Comer","Jogar videogame"], certa:0},
- {p:"Qual esporte é jogado com raquete e peteca?", alts:["Badminton","Futebol","Natação","Judô"], certa:0},
- {p:"No vôlei, quantas vezes o time pode tocar na bola antes de passar?", alts:["3","5","1","10"], certa:0},
- {p:"Qual é o principal benefício da Educação Física?", alts:["Saúde e movimento","Ficar parado","Dormir mais","Comer doce"], certa:0},
- {p:"O que é alongamento?", alts:["Esticar os músculos","Correr rápido","Pular alto","Jogar bola"], certa:0},
- {p:"Quantos minutos tem um jogo de futebol oficial?", alts:["90","60","30","120"], certa:0},
- {p:"Qual esporte usa cesta a 3,05m de altura?", alts:["Basquete","Futebol","Handebol","Tênis"], certa:0},
-];
-let idxPergunta=0;
-
-// ===== JOGO PEGA-PEGA =====
-const canvas=document.getElementById('game');
-const ctx=canvas.getContext('2d');
-let jogador={x:100,y:200,r:18,vel:6};
-let pegador={x:650,y:200,r:22,vel:2.8};
-let estrelas=[];
-let bots=[];
-for(let i=0;i<5;i++){ bots.push({x:Math.random()*700+50,y:Math.random()*350+30,r:16,emoji:emojis[i+5],dx:(Math.random()-0.5)*3,dy:(Math.random()-0.5)*3}); }
-function criarEstrela(){ estrelas.push({x:Math.random()*740+30,y:Math.random()*360+30,r:12}); }
-for(let i=0;i<3;i++) criarEstrela();
-
-let teclas={};
-document.addEventListener('keydown',e=>{ teclas[e.key.toLowerCase()]=true; });
-document.addEventListener('keyup',e=>{ teclas[e.key.toLowerCase()]=false; });
-function mover(dir){
-  if(dir=='up') jogador.y-=18;
-  if(dir=='down') jogador.y+=18;
-  if(dir=='left') jogador.x-=18;
-  if(dir=='right') jogador.x+=18;
-}
-function loop(){
-  if(!jogoRodando) return;
-  // Move jogador teclado
-  if(teclas['arrowup']||teclas['w']) jogador.y-=jogador.vel;
-  if(teclas['arrowdown']||teclas['s']) jogador.y+=jogador.vel;
-  if(teclas['arrowleft']||teclas['a']) jogador.x-=jogador.vel;
-  if(teclas['arrowright']||teclas['d']) jogador.x+=jogador.vel;
-  jogador.x=Math.max(20,Math.min(780,jogador.x));
-  jogador.y=Math.max(20,Math.min(400,jogador.y));
-  // Pegador persegue
-  let dx=jogador.x-pegador.x, dy=jogador.y-pegador.y, dist=Math.hypot(dx,dy);
-  if(dist>1){ pegador.x+=dx/dist*pegador.vel; pegador.y+=dy/dist*pegador.vel; }
-  // Bots fogem
-  bots.forEach(b=>{
-    b.x+=b.dx; b.y+=b.dy;
-    if(b.x<20||b.x>780) b.dx*=-1;
-    if(b.y<20||b.y>400) b.dy*=-1;
-  });
-  // Pegou?
-  if(!foiPego && dist < jogador.r+pegador.r){
-    foiPego=true;
-    jogoRodando=false;
-    document.getElementById('pegouMsg').style.display='block';
-    setTimeout(()=>{ document.getElementById('pegouMsg').style.display='none'; mostrarPergunta(); },600);
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#05050f"><title>PEGA E RESPONDE ⚡ 1000 Perguntas</title><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"><style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}body{background:#05050f;color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden;min-height:100vh}
+.bg{position:fixed;inset:0;z-index:-2;background:#05050f;overflow:hidden}.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;animation:f1 7s ease-in-out infinite}@keyframes f1{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.1)}}.grid{position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%)}
+#menu{min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 16px 50px;text-align:center}.topbar{display:flex;justify-content:space-between;width:100%;max-width:420px;align-items:center}.live{display:flex;align-items:center;gap:6px;background:rgba(255,45,80,.15);border:1px solid rgba(255,45,80,.4);padding:6px 12px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:1px}.dot{width:8px;height:8px;background:#ff2d50;border-radius:50%;animation:pu 1.2s infinite;box-shadow:0 0 10px #ff2d50}@keyframes pu{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}.versao{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.hero{margin:16px 0 4px}.hero-badge{display:inline-flex;gap:6px;background:linear-gradient(90deg,rgba(34,255,136,.2),rgba(0,229,255,.2));border:1px solid rgba(34,255,136,.4);padding:7px 14px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:1.5px}.hero h1{font-family:'Orbitron';font-size:52px;font-weight:900;line-height:.85;letter-spacing:-1px;margin:12px 0 6px;text-shadow:0 0 40px rgba(34,255,136,.5)}.hero h1 .g{background:linear-gradient(90deg,#22ff88,#00e5ff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 100%;animation:sh 3s linear infinite}@keyframes sh{to{background-position:200% 0}}.hero h1 .p{background:linear-gradient(90deg,#ff2d95,#ff6b00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hero p{opacity:.65;font-size:14px;line-height:1.5;max-width:340px;margin:0 auto}.hero p b{color:#ffe600}
+.glass{background:rgba(255,255,255,.07);backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,.14);border-radius:28px;padding:20px;width:100%;max-width:420px;box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.15);margin-top:16px}.label{font-size:11px;font-weight:900;letter-spacing:1.6px;opacity:.55;text-align:left;margin:12px 0 6px}.label:first-child{margin-top:0}.field{position:relative}.field input{width:100%;padding:16px 16px 16px 46px;border-radius:18px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.35);color:#fff;font-size:16px;font-weight:600;outline:none}.field input:focus{border-color:#22ff88;box-shadow:0 0 0 4px rgba(34,255,136,.18)}.field .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:20px}.skins{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.skin{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:26px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.08);border-radius:18px;cursor:pointer;transition:.2s}.skin:active{transform:scale(.9)}.skin.sel{border-color:#22ff88;background:linear-gradient(135deg,rgba(34,255,136,.3),rgba(0,229,255,.2));transform:scale(1.08) rotate(-3deg);box-shadow:0 0 22px rgba(34,255,136,.5)}.codigo-row{display:flex;gap:8px}.codigo-row .field{flex:1}.btn-copy{padding:0 14px;border-radius:18px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:20px;cursor:pointer}.btn-jogar{width:100%;padding:18px;border:none;border-radius:20px;background:linear-gradient(90deg,#22ff88,#00e5ff,#22ff88);background-size:200% 100%;color:#000;font-family:'Orbitron';font-weight:900;font-size:16px;letter-spacing:1px;margin-top:16px;cursor:pointer;box-shadow:0 12px 32px rgba(34,255,136,.45);animation:sh 2s linear infinite}.btn-jogar:active{transform:scale(.97)}.btn-solo{width:100%;padding:18px;border:none;border-radius:20px;background:linear-gradient(90deg,#ff2d95,#ff6b00,#ff2d95);background-size:200% 100%;color:#fff;font-family:'Orbitron';font-weight:900;font-size:16px;letter-spacing:1px;margin-top:10px;cursor:pointer;box-shadow:0 12px 32px rgba(255,45,80,.45);animation:sh 2s linear infinite}.btn-solo:active{transform:scale(.97)}.micro{font-size:12px;opacity:.45;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px}.micro i{width:6px;height:6px;background:#22ff88;border-radius:50%;display:inline-block;animation:pu 1.5s infinite}
+.vagas-wrap{width:100%;max-width:420px;margin-top:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:14px}.vagas-top{display:flex;justify-content:space-between;font-size:12px;font-weight:800;letter-spacing:1px;margin-bottom:8px}.vagas-bar{height:10px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden}.vagas-bar i{display:block;height:100%;background:linear-gradient(90deg,#22ff88,#00e5ff);border-radius:999px;transition:.5s}
+.stats{display:flex;gap:10px;width:100%;max-width:420px;margin-top:12px}.stat{flex:1;background:rgba(255,255,255,.05);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:14px 8px;text-align:center}.stat b{font-size:19px;display:block;font-family:'Orbitron'}.stat span{font-size:10px;opacity:.55;letter-spacing:1px;font-weight:800}
+.como{width:100%;max-width:420px;margin-top:12px;background:linear-gradient(180deg,rgba(34,255,136,.12),rgba(0,0,0,.2));border:1px solid rgba(34,255,136,.25);border-radius:20px;padding:14px;text-align:left;font-size:13px;line-height:1.7}.como b{color:#22ff88}
+#jogo{display:none;padding-bottom:190px}.top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}.logo-mini{font-family:'Orbitron';font-weight:900;font-size:17px}.pill{background:rgba(0,0,0,.55);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);padding:8px 13px;border-radius:999px;font-weight:800;font-size:13px}.meus-pontos{position:fixed;top:64px;right:12px;background:linear-gradient(90deg,#ffe600,#ff9d00);color:#000;padding:9px 15px;border-radius:999px;font-weight:900;z-index:10;box-shadow:0 8px 24px rgba(255,230,0,.45)}#arena{margin:0 12px;height:52vh;min-height:360px;background:linear-gradient(180deg,rgba(0,80,50,.35),rgba(0,0,0,.5));border:1.5px solid rgba(34,255,136,.35);border-radius:28px;position:relative;overflow:hidden;touch-action:none}.player{position:absolute;transform:translate(-50%,-50%);text-align:center;pointer-events:none}.player.eu .avatar{filter:drop-shadow(0 0 16px #ffe600)}.player .avatar{font-size:36px;filter:drop-shadow(0 0 14px rgba(34,255,136,.8));animation:fy 2s ease-in-out infinite}@keyframes fy{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}.player .name{font-size:10px;background:rgba(0,0,0,.75);padding:3px 8px;border-radius:999px;font-weight:700;white-space:nowrap}.pts{font-size:11px;background:#ffe600;color:#000;font-weight:900;padding:2px 8px;border-radius:999px;display:inline-block;margin-top:3px}.acertos{font-size:10px;background:rgba(34,255,136,.25);padding:2px 7px;border-radius:999px;display:inline-block;margin-top:3px}#feed{padding:10px 12px}.feed-item{background:rgba(255,255,255,.07);backdrop-filter:blur(12px);border-left:3px solid #22ff88;padding:8px 12px;border-radius:14px;font-size:13px;margin:4px 0}.controls{position:fixed;bottom:90px;left:0;right:0;display:flex;justify-content:center;z-index:99;pointer-events:none}.joy-wrap{pointer-events:auto;text-align:center}.joy-label{font-size:10px;letter-spacing:2px;opacity:.6;font-weight:800;margin-bottom:6px;background:rgba(0,0,0,.5);padding:4px 10px;border-radius:999px;display:inline-block}#joy{width:140px;height:140px;background:rgba(34,255,136,.12);backdrop-filter:blur(14px);border:3px solid #22ff88;border-radius:50%;position:relative;box-shadow:0 0 30px rgba(34,255,136,.5)}#knob{width:60px;height:60px;background:linear-gradient(135deg,#22ff88,#00e5ff);border-radius:50%;position:absolute;left:40px;top:40px;box-shadow:0 0 24px #22ff88;display:flex;align-items:center;justify-content:center;font-size:26px}.btn-prof{width:calc(100% - 24px);margin:0 12px 10px;background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:14px;border-radius:18px;font-family:'Orbitron';font-weight:900;cursor:pointer;box-shadow:0 10px 24px rgba(34,255,136,.35)}#duelo{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(14px);z-index:30;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}.duelo-card{background:linear-gradient(180deg,#1a1a35,#101024);border:1.5px solid #22ff88;border-radius:28px;padding:24px;width:100%;max-width:400px;text-align:center;box-shadow:0 0 60px rgba(34,255,136,.35);margin:auto}.duelo-card button{width:100%;padding:15px;margin:6px 0;border-radius:16px;border:1px solid rgba(34,255,136,.4);background:rgba(34,255,136,.08);color:#fff;font-size:15px;font-weight:700;cursor:pointer}.duelo-card button:active{background:#22ff88;color:#000}.timer-duelo{width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;margin:10px 0}.timer-duelo i{display:block;height:100%;background:#ff2d95;animation:tm 15s linear forwards}@keyframes tm{from{width:100%}to{width:0%}}
+</style></head><body><div class="bg"><div class="orb" style="width:200px;height:200px;background:#22ff88;top:10%;left:10%"></div><div class="orb" style="width:180px;height:180px;background:#ff2d95;bottom:20%;right:5%"></div><div class="orb" style="width:140px;height:140px;background:#00e5ff;top:60%;left:60%"></div></div><div class="grid"></div>
+<div id="menu"><div class="topbar"><div class="live"><span class="dot"></span> AO VIVO • 30 ALUNOS</div><div class="versao">v12.0 ✨ 1000 PERGUNTAS</div></div><div class="hero"><div class="hero-badge">🏃 EDUCAÇÃO FÍSICA • PEGA-PEGA</div><h1>PEGA<br><span class="g">E RESPONDE</span> <span class="p">⚡</span></h1><p>Encostou? <b>Responde e ganha +100!</b><br>1000 perguntas sem repetir • Ninguém é eliminado!</p></div><div class="glass"><div class="label">👤 SEU NICK</div><div class="field"><span class="icon">😎</span><input id="nome" placeholder="Ex: Thiaguinho..." value="Player1" maxlength="14"></div><div class="label">🎭 ESCOLHA SEU PERSONAGEM</div><div class="skins" id="skins"></div><div class="label">🔑 CÓDIGO DA SALA</div><div class="codigo-row"><div class="field"><span class="icon">🔑</span><input id="codigo" value="NEON1"></div><button class="btn-copy" onclick="copiarLink()">🔗</button></div><button class="btn-jogar" onclick="entrar()">👥 ENTRAR NA ARENA - TURMA</button><button class="btn-solo" onclick="entrarSolo()">🤖 JOGAR SOZINHO vs SISTEMA</button><div class="micro"><i></i> Sem baixar nada • 1 link pra turma toda • Máx 30 jogadores</div></div><div class="vagas-wrap"><div class="vagas-top"><span>👥 VAGAS PREENCHIDAS</span><span id="vagasTxt">0 / 30</span></div><div class="vagas-bar"><i id="vagasBar" style="width:0%"></i></div></div><div class="como">🏃 <b>COMO JOGA? - SUPER FÁCIL!</b><br>1️⃣ Move com o joystick ou <b>toca na arena</b><br>2️⃣ <b>ENCOSTE em alguém</b> - o DUELO abre sozinho, sem clicar!<br>3️⃣ Responda a pergunta<br>✅ Acertou = <b>+100 PTS</b><br>❌ Errou = continua jogando, ninguém sai!<br>👑 No fim de 5 min, quem tiver <b>mais pontos</b> vence!<br>🤖 <b>MODO SOLO:</b> Você contra 5 robôs! 1000 perguntas sem repetir!</div><div class="stats"><div class="stat"><b>⚡ 1000</b><span>PERGUNTAS</span></div><div class="stat"><b>👥 30</b><span>ALUNOS</span></div><div class="stat"><b>🤖 SOLO</b><span>VS SISTEMA</span></div></div></div>
+<div id="jogo"><div class="top"><div class="logo-mini">🏃 PEGA <span style="color:#22ff88">E RESPONDE</span> <span style="font-size:10px;background:#ff2d50;padding:3px 7px;border-radius:999px;vertical-align:middle">LIVE</span></div><div class="pill">⏰ <span id="tempo">5:00</span> • 👥 <span id="vivos">0</span></div></div><div class="meus-pontos" id="meusPontos">⭐ 0 PTS • ✅ 0 acertos</div><button class="btn-prof" id="btnProf" onclick="comecar()">▶️ PROFESSOR: INICIAR PARTIDA</button><div id="arena"></div><div style="text-align:center;margin:10px"><p style="font-size:13px;opacity:.8">🏃 <b>SÓ ENCOSTAR!</b> Corra atrás de alguém que o DUELO abre sozinho!</p><p style="font-size:12px;opacity:.5">🕹️ Use o joystick ou toque na arena pra mover • <span id="restamTxt"></span></p></div><div id="feed"></div><div class="controls"><div class="joy-wrap"><div class="joy-label">🕹️ SEGURE E ARRASTE PRA MOVER</div><div id="joy"><div id="knob">🕹️</div></div></div></div></div>
+<div id="duelo"><div class="duelo-card"><div style="font-size:48px">🏃⚔️</div><h3 id="dueloVs" style="font-family:'Orbitron';margin:8px 0">DUELO!</h3><div class="timer-duelo"><i></i></div><p id="dueloPergunta" style="font-size:18px;font-weight:700;line-height:1.4"></p><div id="dueloOps" style="margin-top:14px"></div></div></div>
+<script src="/socket.io/socket.io.js"></script><script>
+let socket=io(),minhaSkin='🦊',pos={x:400,y:250},meuNome='',alvoAtual=null,emDuelo=false;
+let modo='turma',bots=[],meusPontosSolo=0,meusAcertosSolo=0,tempoSolo=300,soloRodando=false,cooldownSolo=0;
+let perguntasSolo=[],filaSolo=[];
+async function carregarPerguntasSolo(){try{let r=await fetch('/perguntas');perguntasSolo=await r.json();}catch(e){perguntasSolo=[{q:"Qual esporte usa CESTA?",a:["Basquete","Vôlei","Handebol","Natação"],c:0}];}}
+carregarPerguntasSolo();
+function proximaPerguntaSolo(){
+  if(filaSolo.length===0){
+    filaSolo=[...perguntasSolo];
+    for(let i=filaSolo.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[filaSolo[i],filaSolo[j]]=[filaSolo[j],filaSolo[i]];}
   }
-  // Estrela
-  estrelas.forEach((s,i)=>{
-    if(Math.hypot(jogador.x-s.x,jogador.y-s.y)<30){ estrelas.splice(i,1); pontos+=20; document.getElementById('pontos').textContent=pontos; criarEstrela(); }
-  });
-  desenhar();
-  requestAnimationFrame(loop);
+  let p=filaSolo.pop();
+  let alts=[...p.a]; let corretaTexto=p.a[p.c];
+  for(let i=alts.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[alts[i],alts[j]]=[alts[j],alts[i]];}
+  return {q:p.q,a:alts,c:alts.indexOf(corretaTexto)};
+}let skins=['🦊','🐲','⚽','🏀','🏐','🥋','🏋️','🤸','🏃','🚴','🦁','🦸','🐯','🐺','🦄','🐼','🦖','👽','🤖','👾','🦾','🛸','🧙','🧛','🧚','🥷','👑','🎃','😎','🤠','👩‍🚀','👨‍🚀','🏄','🏊','⛹️','🤾'];let div=document.getElementById('skins');skins.forEach(s=>{let b=document.createElement('div');b.className='skin'+(s==='🦊'?' sel':'');b.innerText=s;b.onclick=()=>{minhaSkin=s;if(navigator.vibrate)navigator.vibrate(10);document.querySelectorAll('.skin').forEach(e=>e.classList.remove('sel'));b.classList.add('sel')};div.appendChild(b)});
+function copiarLink(){let l=location.origin+'?sala='+document.getElementById('codigo').value;navigator.clipboard.writeText(l).then(()=>alert('🔗 Link copiado! Manda no WhatsApp!'))}
+function entrar(){modo='turma';meuNome=document.getElementById('nome').value||'Player';if(navigator.vibrate)navigator.vibrate([20,30,20]);socket.emit('entrar',{nome:meuNome,skin:minhaSkin});document.getElementById('menu').style.display='none';document.getElementById('jogo').style.display='block';window.scrollTo(0,0)}
+function comecar(){socket.emit('comecar')}
+async function entrarSolo(){
+  modo='solo';meuNome=document.getElementById('nome').value||'Player';filaSolo=[];
+  if(perguntasSolo.length===0) await carregarPerguntasSolo();
+  if(navigator.vibrate)navigator.vibrate([20,30,20]);
+  document.getElementById('menu').style.display='none';document.getElementById('jogo').style.display='block';document.getElementById('btnProf').style.display='none';
+  window.scrollTo(0,0);
+  bots=[
+    {nome:'Robô Bolt',skin:'🤖',x:100,y:100,pontos:0,acertos:0,vx:2,vy:1.5},
+    {nome:'Robô Flash',skin:'🦾',x:650,y:80,pontos:0,acertos:0,vx:-2,vy:2},
+    {nome:'Robô Turbo',skin:'👾',x:100,y:350,pontos:0,acertos:0,vx:1.5,vy:-2},
+    {nome:'Robô Neon',skin:'🛸',x:650,y:350,pontos:0,acertos:0,vx:-1.5,vy:-1.5},
+    {nome:'Robô Rex',skin:'🦖',x:400,y:250,pontos:0,acertos:0,vx:2.5,vy:2.5},
+  ];
+  meusPontosSolo=0;meusAcertosSolo=0;tempoSolo=300;soloRodando=true;
+  document.getElementById('meusPontos').innerText='⭐ 0 PTS • ✅ 0 acertos';
+  document.getElementById('vivos').innerText='1 + 5 robôs';
+  alert('🤖 MODO SOLO! Você contra 5 robôs! 1000 perguntas SEM REPETIR!');
+  setInterval(()=>{
+    if(!soloRodando||modo!=='solo')return;
+    bots.forEach(b=>{
+      if(Math.random()<0.6){if(b.x<pos.x)b.x+=2;else b.x-=2;if(b.y<pos.y)b.y+=2;else b.y-=2;}
+      else{b.x+=b.vx*2;b.y+=b.vy*2;if(b.x<20||b.x>780)b.vx*=-1;if(b.y<20||b.y>420)b.vy*=-1;}
+      b.x=Math.max(20,Math.min(780,b.x));b.y=Math.max(20,Math.min(420,b.y));
+    });
+    if(!emDuelo&&Date.now()-cooldownSolo>3000){for(let b of bots){let dist=Math.sqrt(Math.pow(pos.x-b.x,2)+Math.pow(pos.y-b.y,2));if(dist<70){abrirDueloSolo(b);break;}}}
+    let arena=document.getElementById('arena');arena.innerHTML='';
+    let euDiv=document.createElement('div');euDiv.className='player eu';euDiv.style.left=(pos.x/800*100)+'%';euDiv.style.top=(pos.y/500*100)+'%';
+    euDiv.innerHTML=`<div class="avatar">${minhaSkin}</div><div class="name">${meuNome}</div><div class="pts">⭐ ${meusPontosSolo}</div><div class="acertos">✅ ${meusAcertosSolo} acertos</div>`;
+    arena.appendChild(euDiv);
+    bots.forEach(b=>{let d=document.createElement('div');d.className='player';d.style.left=(b.x/800*100)+'%';d.style.top=(b.y/500*100)+'%';d.innerHTML=`<div class="avatar">${b.skin}</div><div class="name">${b.nome}</div><div class="pts">⭐ ${b.pontos}</div><div class="acertos">✅ ${b.acertos} acertos</div>`;arena.appendChild(d);});
+    document.getElementById('restamTxt').innerText='Restam '+filaSolo.length+' perguntas novas';
+  },50);
+  setInterval(()=>{if(!soloRodando||modo!=='solo')return;tempoSolo--;let min=Math.floor(tempoSolo/60);let seg=String(tempoSolo%60).padStart(2,'0');document.getElementById('tempo').innerText=min+':'+seg;if(tempoSolo<=0){soloRodando=false;mostrarPodioSolo();}},1000);
 }
-function desenhar(){
-  ctx.clearRect(0,0,800,420);
-  // Linhas quadra
-  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.beginPath(); ctx.moveTo(400,0); ctx.lineTo(400,420); ctx.stroke();
-  ctx.beginPath(); ctx.arc(400,210,80,0,Math.PI*2); ctx.stroke();
-  // Estrelas
-  estrelas.forEach(s=>{ ctx.font='22px Arial'; ctx.fillText('⭐',s.x-11,s.y+8); });
-  // Bots
-  bots.forEach(b=>{ ctx.font='28px Arial'; ctx.fillText(b.emoji,b.x-14,b.y+10); });
-  // Pegador
-  ctx.font='38px Arial'; ctx.fillText('🔴',pegador.x-19,pegador.y+13);
-  ctx.font='12px Arial'; ctx.fillStyle='#fff'; ctx.fillText('PEGADOR',pegador.x-30,pegador.y-28);
-  // Jogador
-  ctx.font='32px Arial'; ctx.fillText(pers,jogador.x-16,jogador.y+11);
-  ctx.font='11px Arial'; ctx.fillStyle='#fff'; ctx.fillText(document.getElementById('nick').value||'Você',jogador.x-20,jogador.y-24);
+function abrirDueloSolo(bot){
+  emDuelo=true;cooldownSolo=Date.now();if(navigator.vibrate)navigator.vibrate([50,50,50]);
+  let p=proximaPerguntaSolo();
+  let alts=p.a; let corretaIndex=p.c;
+  document.getElementById('duelo').style.display='flex';document.getElementById('dueloVs').innerText='⚔️ VOCÊ ENCOSTOU EM '+bot.nome+'!';document.getElementById('dueloPergunta').innerText=p.q;
+  let ops=document.getElementById('dueloOps');ops.innerHTML='';
+  alts.forEach((alt,i)=>{let b=document.createElement('button');b.innerText=alt;b.onclick=()=>{document.getElementById('duelo').style.display='none';emDuelo=false;if(i===corretaIndex){meusPontosSolo+=100;meusAcertosSolo++;alert('✅ ACERTOU! +100 PTS! Total: '+meusPontosSolo);}else{alert('❌ Errou! O robô escapou! Continua jogando!');}document.getElementById('meusPontos').innerText=`⭐ ${meusPontosSolo} PTS • ✅ ${meusAcertosSolo} acertos`;bot.x=Math.random()*700+50;bot.y=Math.random()*400+50;};ops.appendChild(b);});
 }
-function entrar(){
-  document.getElementById('inicio').style.display='none';
-  document.getElementById('arena').style.display='block';
-  document.getElementById('hudNick').textContent=document.getElementById('nick').value||'Player1';
-  document.getElementById('hudPers').textContent=pers;
-  if(modo=='vidas'){ vidas=totalVidas; }
-  atualizarVidas();
-  jogoRodando=true;
-  loop();
-  // Timer
-  let t=setInterval(()=>{
-    if(!jogoRodando && foiPego) return;
-    tempo--; document.getElementById('tempo').textContent=tempo;
-    if(tempo<=0){ clearInterval(t); alert('⏱️ Tempo acabou! Você fez '+pontos+' pontos!'); location.reload(); }
-  },1000);
+function mostrarPodioSolo(){
+  let div2=document.createElement('div');div2.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px';
+  let venceu=meusPontosSolo>=200;
+  div2.innerHTML=`<div style="background:linear-gradient(180deg,#1a1a35,#0f0f22);border:2px solid #ffe600;border-radius:28px;padding:26px;width:100%;max-width:420px"><div style="font-size:64px">${venceu?'🏆':'🤖'}</div><h1 style="font-family:Orbitron">${venceu?'VOCÊ VENCEU O SISTEMA!':'FIM DO MODO SOLO!'}</h1><p style="opacity:.7">Você contra 5 robôs! 1000 perguntas sem repetir!</p><div style="background:rgba(255,230,0,.15);border-radius:16px;padding:16px;margin:16px 0"><b style="font-size:28px">⭐ ${meusPontosSolo} PTS</b><br><span>✅ ${meusAcertosSolo} acertos</span></div><button onclick="location.reload()" style="background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:15px;border-radius:16px;font-weight:900;width:100%;font-family:Orbitron;cursor:pointer">🔁 JOGAR DE NOVO</button></div>`;
+  document.body.appendChild(div2);
 }
-function mostrarPergunta(){
-  let q=perguntas[idxPergunta%perguntas.length]; idxPergunta++;
-  document.getElementById('perguntaBox').style.display='block';
-  document.getElementById('textoPergunta').textContent=q.p;
-  let div=document.getElementById('alts'); div.innerHTML='';
-  q.alts.forEach((a,i)=>{
-    let b=document.createElement('button'); b.className='alt'; b.textContent=a;
-    b.onclick=()=>responder(i==q.certa,b,q);
-    div.appendChild(b);
-  });
-  document.getElementById('perguntaBox').scrollIntoView({behavior:'smooth'});
-}
-function responder(correta,btn,q){
-  document.querySelectorAll('.alt').forEach(b=>b.disabled=true);
-  if(correta){
-    btn.classList.add('certa'); pontos+=100; acertos++;
-    document.getElementById('pontos').textContent=pontos;
-    document.getElementById('acertos').textContent=acertos;
-    document.getElementById('rankList').textContent=`Você: 1º • ${pontos} pts`;
-    document.getElementById('statusJogo').textContent='✅ ACERTOU! +100 pts! Corre que o pegador vem aí!';
-    setTimeout(()=>{
-      document.getElementById('perguntaBox').style.display='none';
-      // Foge: joga jogador pra longe do pegador
-      jogador.x=100; jogador.y=100; pegador.x=650; pegador.y=300;
-      foiPego=false; jogoRodando=true; loop();
-    },900);
-  }else{
-    btn.classList.add('errada');
-    document.querySelectorAll('.alt').forEach((b,i)=>{ if(i==q.certa) b.classList.add('certa'); });
-    if(modo=='vidas'){
-      vidas--; atualizarVidas();
-      if(vidas<=0){
-        setTimeout(()=>{
-          document.getElementById('arena').style.display='none';
-          document.getElementById('eliminado').style.display='block';
-        },800);
-        return;
-      }
-      document.getElementById('statusJogo').textContent='❌ ERROU! Perdeu 1 vida! Você ainda tem '+vidas+' ❤️';
-    }else{
-      document.getElementById('statusJogo').textContent='❌ ERROU! Mas no modo SEM ELIMINAÇÃO você continua! Corre!';
-    }
-    setTimeout(()=>{
-      document.getElementById('perguntaBox').style.display='none';
-      jogador.x=120; jogador.y=200; pegador.x=600; pegador.y=200;
-      foiPego=false; jogoRodando=true; loop();
-    },1400);
-  }
-}
-function pedirReviver(){
-  document.getElementById('msgReviver').textContent='📣 Professor! '+document.getElementById('nick').value+' pediu pra reviver!';
-  setTimeout(()=>{
-    if(confirm('PROFESSOR: Reviver '+document.getElementById('nick').value+' com ❤️❤️❤️ ?')){
-      vidas=totalVidas; atualizarVidas();
-      document.getElementById('eliminado').style.display='none';
-      document.getElementById('arena').style.display='block';
-      jogador.x=100; jogador.y=100; pegador.x=650; pegador.y=300;
-      foiPego=false; jogoRodando=true; loop();
-    }
-  },500);
-}
-</script>
-</body>
-</html>
+let joy=document.getElementById('joy'),knob=document.getElementById('knob'),movendo=false,dx=0,dy=0;
+function moveJoy(e){let r=joy.getBoundingClientRect();let cx=(e.touches?e.touches[0].clientX:e.clientX);let cy=(e.touches?e.touches[0].clientY:e.clientY);dx=Math.max(-40,Math.min(40,cx-(r.left+70)));dy=Math.max(-40,Math.min(40,cy-(r.top+70)));knob.style.left=(40+dx)+'px';knob.style.top=(40+dy)+'px';movendo=true;}
+joy.addEventListener('touchmove',e=>{e.preventDefault();moveJoy(e)},{passive:false});joy.addEventListener('touchend',()=>{movendo=false;dx=dy=0;knob.style.left='40px';knob.style.top='40px'});joy.addEventListener('mousemove',e=>{if(e.buttons===1)moveJoy(e)});joy.addEventListener('mouseup',()=>{movendo=false;dx=dy=0;knob.style.left='40px';knob.style.top='40px'});
+let teclas={};addEventListener('keydown',e=>{teclas[e.key.toLowerCase()]=true});addEventListener('keyup',e=>{teclas[e.key.toLowerCase()]=false});
+document.getElementById('arena').addEventListener('click',e=>{let r=e.currentTarget.getBoundingClientRect();pos.x=Math.max(20,Math.min(780,((e.clientX-r.left)/r.width)*800));pos.y=Math.max(20,Math.min(420,((e.clientY-r.top)/r.height)*500));if(modo==='turma')socket.emit('mover',pos);if(navigator.vibrate)navigator.vibrate(10)});
+setInterval(()=>{let vx=0,vy=0;if(movendo){vx=dx;vy=dy;}if(teclas['w']||teclas['arrowup'])vy-=30;if(teclas['s']||teclas['arrowdown'])vy+=30;if(teclas['a']||teclas['arrowleft'])vx-=30;if(teclas['d']||teclas['arrowright'])vx+=30;if(vx!==0||vy!==0){pos.x=Math.max(20,Math.min(780,pos.x+vx*0.35));pos.y=Math.max(20,Math.min(420,pos.y+vy*0.35));if(modo==='turma')socket.emit('mover',pos);}},30);
+socket.on('lotado',()=>{alert('🚫 SALA CHEIA! São 30 jogadores!');document.getElementById('menu').style.display='flex';document.getElementById('jogo').style.display='none'});
+socket.on('comecou',()=>alert('🏃 COMEÇOU! Encoste em alguém pra duelar! Ninguém é eliminado!'));
+socket.on('duelo',d=>{if(emDuelo)return;emDuelo=true;if(navigator.vibrate)navigator.vibrate([50,50,50]);alvoAtual=d.alvoId;document.getElementById('duelo').style.display='flex';document.getElementById('dueloVs').innerText='⚔️ VOCÊ ENCOSTOU EM '+d.oponente+'!';document.getElementById('dueloPergunta').innerText=d.pergunta.q;let ops=document.getElementById('dueloOps');ops.innerHTML='';d.pergunta.a.forEach((alt,i)=>{let b=document.createElement('button');b.innerText=alt;b.onclick=()=>{socket.emit('responder',{correta:i===d.pergunta.c,alvoId:alvoAtual});document.getElementById('duelo').style.display='none';emDuelo=false};ops.appendChild(b)})});
+socket.on('duelo-fim',d=>{emDuelo=false;if(d.resultado==='ganhou'){if(navigator.vibrate)navigator.vibrate(100);alert('✅ ACERTOU! +100 PTS! Total: '+d.acertos+' acertos')}else alert('❌ Errou! Sem problema, continua jogando! Encoste em outro!')});
+socket.on('podio',ranking=>{let div2=document.createElement('div');div2.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;overflow-y:auto';let p1=ranking[0]?.nome||'---',p2=ranking[1]?.nome||'---',p3=ranking[2]?.nome||'---';let k1=ranking[0]?.pontos||0,k2=ranking[1]?.pontos||0,k3=ranking[2]?.pontos||0;let a1=ranking[0]?.acertos||0,a2=ranking[1]?.acertos||0,a3=ranking[2]?.acertos||0;let s1=ranking[0]?.skin||'🏆',s2=ranking[1]?.skin||'🥈',s3=ranking[2]?.skin||'🥉';div2.innerHTML=`<div style="background:linear-gradient(180deg,#1a1a35,#0f0f22);border:2px solid #ffe600;border-radius:28px;padding:26px;width:100%;max-width:420px;box-shadow:0 0 60px rgba(255,230,0,.35);margin:auto"><div style="font-size:64px">🏆</div><h1 style="font-family:Orbitron;margin:0">PÓDIO FINAL!</h1><p style="opacity:.7">Top 3 de 30 jogadores! Ninguém foi eliminado!</p><div style="display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:22px 0"><div><div style="font-size:36px">${s2}</div><div style="background:#94a3b8;padding:12px;border-radius:14px 14px 0 0;height:90px"><b>${p2}</b><br>⭐ ${k2} pts<br><span style="font-size:12px">✅ ${a2} acertos</span></div></div><div><div style="font-size:48px">${s1}</div><div style="background:linear-gradient(180deg,#ffe600,#ff9d00);color:#000;padding:14px;border-radius:14px 14px 0 0;height:130px"><b>${p1}</b><br>👑 CAMPEÃO<br>⭐ ${k1} pts<br><span style="font-size:12px">✅ ${a1} acertos</span></div></div><div><div style="font-size:36px">${s3}</div><div style="background:#b45309;padding:12px;border-radius:14px 14px 0 0;height:70px"><b>${p3}</b><br>⭐ ${k3} pts<br><span style="font-size:12px">✅ ${a3} acertos</span></div></div></div><button onclick="location.reload()" style="background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:15px;border-radius:16px;font-weight:900;width:100%;font-family:Orbitron;cursor:pointer">🔁 JOGAR DE NOVO</button></div>`;document.body.appendChild(div2)});
+socket.on('estado',s=>{if(modo!=='turma')return;let min=Math.floor(s.tempo/60);let seg=String(s.tempo%60).padStart(2,'0');document.getElementById('tempo').innerText=min+':'+seg;let total=s.total||Object.keys(s.jogadores).length;document.getElementById('vivos').innerText=total+'/30';document.getElementById('vagasTxt').innerText=total+' / 30';document.getElementById('vagasBar').style.width=(total/30*100)+'%';document.getElementById('restamTxt').innerText='Restam '+s.restam+' perguntas novas';let arena=document.getElementById('arena');arena.innerHTML='';Object.values(s.jogadores).forEach(j=>{let d=document.createElement('div');d.className='player'+(j.nome===meuNome?' eu':'');d.style.left=(j.x/800*100)+'%';d.style.top=(j.y/500*100)+'%';d.innerHTML=`<div class="avatar">${j.skin}</div><div class="name">${j.nome}</div><div class="pts">⭐ ${j.pontos||0}</div><div class="acertos">✅ ${j.acertos||0} acertos</div>`;arena.appendChild(d)});let eu=Object.values(s.jogadores).find(j=>j.nome===meuNome);if(eu){document.getElementById('meusPontos').innerText=`⭐ ${eu.pontos} PTS • ✅ ${eu.acertos} acertos`}document.getElementById('feed').innerHTML=s.feed.map(f=>`<div class="feed-item">${f}</div>`).join('')});
+</script></body></html>
