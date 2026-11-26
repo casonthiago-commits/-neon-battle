@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PEGA E RESPONDE v13 - VIDAS</title>
+<title>PEGA E RESPONDE - PEGA-PEGA + VIDAS</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
 body{background:#0a0a1a;color:#fff;min-height:100vh;overflow-x:hidden}
@@ -22,6 +22,7 @@ input{width:100%;background:#0f0f1f;border:1px solid #333;color:#fff;padding:12p
 .modos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .modo{border:2px solid #333;background:#0f0f1f;border-radius:14px;padding:12px;cursor:pointer;text-align:center}
 .modo.ativo{border-color:#00f0ff;background:#002a33;box-shadow:0 0 15px #00f0ff55}
+.modo.ativo-vidas{border-color:#ff2d78!important;background:#2a0a1a!important;box-shadow:0 0 15px #ff2d7855!important}
 .modo b{display:block;font-size:14px}
 .modo span{font-size:11px;opacity:.7}
 .vidas-config{display:none;background:#2a0a1a;border:1px dashed #ff2d78;border-radius:12px;padding:10px;margin-top:10px;text-align:center}
@@ -32,73 +33,94 @@ input{width:100%;background:#0f0f1f;border:1px solid #333;color:#fff;padding:12p
 .pers{background:#252545;border:2px solid #333;border-radius:12px;font-size:26px;padding:10px 0;text-align:center;cursor:pointer}
 .pers.ativo{border-color:#00ff88;box-shadow:0 0 12px #00ff8855;transform:scale(1.05)}
 .btn{background:#00f0c8;color:#00332a;font-weight:900;border:none;width:100%;padding:16px;border-radius:14px;font-size:16px;cursor:pointer;margin-top:16px}
+.btn2{background:#ff2d78;color:#fff;font-weight:900;border:none;padding:10px 16px;border-radius:10px;cursor:pointer}
 #arena{display:none;max-width:900px;margin:0 auto;padding:14px}
 .hud{display:flex;justify-content:space-between;align-items:center;background:#1a1a2e;padding:12px 16px;border-radius:14px;flex-wrap:wrap;gap:8px}
 .vidas{font-size:24px;letter-spacing:2px}
 .vidas .perdida{opacity:.2;filter:grayscale(1)}
-#pergunta{background:#fff;color:#111;padding:20px;border-radius:16px;margin:16px 0;text-align:center}
-#pergunta h2{font-size:22px}
-.alts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#canvasWrap{position:relative;background:#0f2a1a;border:3px solid #00ff88;border-radius:16px;overflow:hidden;margin:14px 0}
+canvas{width:100%;height:420px;display:block;background:radial-gradient(circle at 50% 50%, #1a4d2e 0%, #0f2a1a 70%)}
+#pegouMsg{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:#ff2d78;padding:8px 16px;border-radius:20px;font-weight:900;display:none;z-index:10;animation:tremer .4s}
+#perguntaBox{display:none;background:#fff;color:#111;padding:20px;border-radius:16px;margin:14px 0;text-align:center}
+#perguntaBox h2{font-size:22px}
+.alts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .alt{background:#252545;border:2px solid #333;color:#fff;padding:16px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer}
 .alt:hover{border-color:#00f0ff}
 .alt.errada{background:#ff2d78!important;animation:tremer .4s}
 .alt.certa{background:#00c853!important}
 @keyframes tremer{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.controles{display:flex;gap:10px;justify-content:center;margin:10px 0}
+.controles button{background:#252545;border:1px solid #444;color:#fff;width:60px;height:60px;border-radius:50%;font-size:22px;cursor:pointer}
+.rank{background:#1a1a2e;padding:14px;border-radius:14px;margin-top:14px}
 #eliminado{display:none;text-align:center;padding:40px 20px}
 #eliminado h1{font-size:48px}
-.rank{background:#1a1a2e;padding:14px;border-radius:14px;margin-top:14px}
-@media(max-width:600px){.alts{grid-template-columns:1fr}.hero h1{font-size:40px}}
+@media(max-width:600px){.alts{grid-template-columns:1fr}.hero h1{font-size:40px}canvas{height:320px}}
 </style>
 </head>
 <body>
 
+<!-- TELA INICIAL -->
 <div id="inicio">
-<div class="topo"><span class="badge">🔴 AO VIVO • 30 ALUNOS</span><span class="badge2">v13.0 ✨ 1000 PERGUNTAS</span></div>
-<div class="hero"><small>🏃 EDUCAÇÃO FÍSICA • PEGA-PEGA</small><h1>PEGA<br><span>E RESPONDE ⚡</span></h1><p>Encostou? Responde e ganha +100!</p><p>1000 perguntas sem repetir</p></div>
-
+<div class="topo"><span class="badge">🔴 AO VIVO • 30 ALUNOS</span><span class="badge2">v14.0 ✨ PEGA-PEGA + VIDAS</span></div>
+<div class="hero"><small>🏃 EDUCAÇÃO FÍSICA • PEGA-PEGA</small><h1>PEGA<br><span>E RESPONDE ⚡</span></h1><p>Encostou? Responde e ganha +100!</p><p>1000 perguntas sem repetir • Fuja do pegador!</p></div>
 <div class="card">
 <label>👤 SEU NICK</label>
 <input id="nick" value="Player1" maxlength="12">
-
 <label>🎮 MODO DE JOGO</label>
 <div class="modos">
-<div class="modo" id="modoClassico" onclick="setModo('classico')"><b>♾️ SEM ELIMINAÇÃO</b><span>Todo mundo joga até o fim</span></div>
-<div class="modo ativo" id="modoVidas" onclick="setModo('vidas')"><b>❤️ COM VIDAS</b><span>Errou, perde vida!</span></div>
+<div class="modo ativo" id="modoClassico" onclick="setModo('classico')"><b>♾️ SEM ELIMINAÇÃO</b><span>Todo mundo joga até o fim<br>Jeito antigo, que você já tinha</span></div>
+<div class="modo" id="modoVidas" onclick="setModo('vidas')"><b>❤️ COM VIDAS</b><span>Errou, perde vida!<br>Perdeu tudo = arquibancada</span></div>
 </div>
-
-<div class="vidas-config mostrar" id="configVidas">
+<div class="vidas-config" id="configVidas">
 <b>Quantas vidas?</b><br><br>
 <button onclick="setVidas(1,this)">❤️ 1</button>
 <button onclick="setVidas(3,this)" class="ativo">❤️❤️❤️ 3</button>
 <button onclick="setVidas(5,this)">❤️❤️❤️❤️❤️ 5</button>
-<p style="font-size:11px;opacity:.7;margin-top:8px">Perdeu todas = vai pra arquibancada. Professor pode reviver!</p>
+<p style="font-size:11px;opacity:.7;margin-top:8px">Professor pode reviver quem foi eliminado!</p>
 </div>
-
 <label>🎭 ESCOLHA SEU PERSONAGEM</label>
 <div class="personagens" id="personagens"></div>
-
 <label>🔑 CÓDIGO DA SALA</label>
 <input id="sala" value="NEON1">
-
 <button class="btn" onclick="entrar()">▶ ENTRAR NA ARENA - TURMA</button>
+<p style="text-align:center;font-size:12px;opacity:.6;margin-top:10px">Use as SETAS ou WASD no PC • No celular use os botões 👇</p>
 </div>
 </div>
 
+<!-- ARENA PEGA-PEGA -->
 <div id="arena">
 <div class="hud">
 <span>👤 <b id="hudNick">Player1</b> <span id="hudPers">🦊</span></span>
-<span class="vidas" id="hudVidas">❤️❤️❤️</span>
+<span class="vidas" id="hudVidas">♾️</span>
 <span>⭐ <b id="pontos">0</b> pts</span>
-<span>🎯 <b id="acertos">0</b> acertos</span>
+<span>🎯 <b id="acertos">0</b></span>
+<span>⏱️ <b id="tempo">60</b>s</span>
+</div>
+<div id="canvasWrap">
+<div id="pegouMsg">😱 VOCÊ FOI PEGO! RESPONDE!</div>
+<canvas id="game" width="800" height="420"></canvas>
+</div>
+<div style="text-align:center;font-weight:800;color:#7CFFB2" id="statusJogo">🏃 FUJA DO PEGADOR 🔴 • Pegue as ⭐ pra ganhar pontos!</div>
+
+<div id="perguntaBox">
+<h2 id="textoPergunta">Pergunta...</h2>
+<p style="opacity:.6;font-size:13px;margin-top:6px">Acertou = escapa +100 pts! Errou = perde vida (se tiver no modo vidas)</p>
+<div class="alts" id="alts"></div>
 </div>
 
-<div id="pergunta"><h2 id="textoPergunta">Carregando pergunta...</h2><p style="opacity:.6;font-size:13px;margin-top:6px">Você foi pego! Responde pra continuar!</p></div>
-<div class="alts" id="alts"></div>
-
+<div class="controles">
+<button onclick="mover('up')">⬆️</button>
+</div>
+<div class="controles">
+<button onclick="mover('left')">⬅️</button>
+<button onclick="mover('down')">⬇️</button>
+<button onclick="mover('right')">➡️</button>
+</div>
 <div class="rank">🏆 <b>RANKING AO VIVO</b> <span id="rankList" style="float:right">Você: 1º • 0 pts</span></div>
 <button class="btn" style="background:#333;color:#fff" onclick="location.reload()">⬅ Sair da Arena</button>
 </div>
 
+<!-- ELIMINADO -->
 <div id="eliminado">
 <h1>💀 ELIMINADO!</h1>
 <p style="font-size:18px;margin:12px 0">Suas vidas acabaram!<br>Você foi pra <b>ARQUIBANCADA</b> 👀</p>
@@ -109,7 +131,8 @@ input{width:100%;background:#0f0f1f;border:1px solid #333;color:#fff;padding:12p
 </div>
 
 <script>
-let modo='vidas', totalVidas=3, vidas=3, pontos=0, acertos=0, pers='🦊';
+// ===== CONFIG MODO / VIDAS =====
+let modo='classico', totalVidas=3, vidas=3, pontos=0, acertos=0, pers='🦊', tempo=60, jogoRodando=false, foiPego=false;
 const emojis=['🦊','🧚','⚽','🏀','🏐','👕','🏋️','🤸','🏃','🏄','🦁','👨‍🏫','🐯','🐺','🦄','🐼','🦖','👽','🤖','👾','💪','🛸','🏊','🤾','🧑‍🚀','👩‍🏫','🏄','🏊','🤾','🏃'];
 const persDiv=document.getElementById('personagens');
 emojis.forEach((e,i)=>{
@@ -120,7 +143,9 @@ emojis.forEach((e,i)=>{
 function setModo(m){
   modo=m;
   document.getElementById('modoClassico').classList.toggle('ativo',m=='classico');
+  document.getElementById('modoClassico').classList.remove('ativo-vidas');
   document.getElementById('modoVidas').classList.toggle('ativo',m=='vidas');
+  document.getElementById('modoVidas').classList.toggle('ativo-vidas',m=='vidas');
   document.getElementById('configVidas').classList.toggle('mostrar',m=='vidas');
 }
 function setVidas(n,btn){
@@ -128,30 +153,115 @@ function setVidas(n,btn){
   document.querySelectorAll('#configVidas button').forEach(b=>b.classList.remove('ativo'));
   btn.classList.add('ativo');
 }
+function atualizarVidas(){
+  if(modo=='classico'){ document.getElementById('hudVidas').textContent='♾️'; return; }
+  let html='';
+  for(let i=0;i<totalVidas;i++) html+=`<span class="${i<vidas?'':'perdida'}">❤️</span>`;
+  document.getElementById('hudVidas').innerHTML=html;
+}
+
+// ===== PERGUNTAS =====
 const perguntas=[
- {p:"Qual é o esporte que usa uma bola e o objetivo é fazer gol com os pés?", alts:["Futebol","Basquete","Vôlei","Tênis"], certa:0},
+ {p:"Qual esporte usa bola e o objetivo é fazer gol com os pés?", alts:["Futebol","Basquete","Vôlei","Tênis"], certa:0},
  {p:"Quantos jogadores tem em quadra em cada time no futsal?", alts:["5","7","11","3"], certa:0},
  {p:"Qual parte do corpo NÃO pode usar no futebol (exceto goleiro)?", alts:["Mão","Pé","Cabeça","Peito"], certa:0},
  {p:"O que é aquecimento?", alts:["Preparar o corpo","Dormir","Comer","Jogar videogame"], certa:0},
  {p:"Qual esporte é jogado com raquete e peteca?", alts:["Badminton","Futebol","Natação","Judô"], certa:0},
+ {p:"No vôlei, quantas vezes o time pode tocar na bola antes de passar?", alts:["3","5","1","10"], certa:0},
+ {p:"Qual é o principal benefício da Educação Física?", alts:["Saúde e movimento","Ficar parado","Dormir mais","Comer doce"], certa:0},
+ {p:"O que é alongamento?", alts:["Esticar os músculos","Correr rápido","Pular alto","Jogar bola"], certa:0},
+ {p:"Quantos minutos tem um jogo de futebol oficial?", alts:["90","60","30","120"], certa:0},
+ {p:"Qual esporte usa cesta a 3,05m de altura?", alts:["Basquete","Futebol","Handebol","Tênis"], certa:0},
 ];
-let idx=0;
+let idxPergunta=0;
+
+// ===== JOGO PEGA-PEGA =====
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+let jogador={x:100,y:200,r:18,vel:6};
+let pegador={x:650,y:200,r:22,vel:2.8};
+let estrelas=[];
+let bots=[];
+for(let i=0;i<5;i++){ bots.push({x:Math.random()*700+50,y:Math.random()*350+30,r:16,emoji:emojis[i+5],dx:(Math.random()-0.5)*3,dy:(Math.random()-0.5)*3}); }
+function criarEstrela(){ estrelas.push({x:Math.random()*740+30,y:Math.random()*360+30,r:12}); }
+for(let i=0;i<3;i++) criarEstrela();
+
+let teclas={};
+document.addEventListener('keydown',e=>{ teclas[e.key.toLowerCase()]=true; });
+document.addEventListener('keyup',e=>{ teclas[e.key.toLowerCase()]=false; });
+function mover(dir){
+  if(dir=='up') jogador.y-=18;
+  if(dir=='down') jogador.y+=18;
+  if(dir=='left') jogador.x-=18;
+  if(dir=='right') jogador.x+=18;
+}
+function loop(){
+  if(!jogoRodando) return;
+  // Move jogador teclado
+  if(teclas['arrowup']||teclas['w']) jogador.y-=jogador.vel;
+  if(teclas['arrowdown']||teclas['s']) jogador.y+=jogador.vel;
+  if(teclas['arrowleft']||teclas['a']) jogador.x-=jogador.vel;
+  if(teclas['arrowright']||teclas['d']) jogador.x+=jogador.vel;
+  jogador.x=Math.max(20,Math.min(780,jogador.x));
+  jogador.y=Math.max(20,Math.min(400,jogador.y));
+  // Pegador persegue
+  let dx=jogador.x-pegador.x, dy=jogador.y-pegador.y, dist=Math.hypot(dx,dy);
+  if(dist>1){ pegador.x+=dx/dist*pegador.vel; pegador.y+=dy/dist*pegador.vel; }
+  // Bots fogem
+  bots.forEach(b=>{
+    b.x+=b.dx; b.y+=b.dy;
+    if(b.x<20||b.x>780) b.dx*=-1;
+    if(b.y<20||b.y>400) b.dy*=-1;
+  });
+  // Pegou?
+  if(!foiPego && dist < jogador.r+pegador.r){
+    foiPego=true;
+    jogoRodando=false;
+    document.getElementById('pegouMsg').style.display='block';
+    setTimeout(()=>{ document.getElementById('pegouMsg').style.display='none'; mostrarPergunta(); },600);
+  }
+  // Estrela
+  estrelas.forEach((s,i)=>{
+    if(Math.hypot(jogador.x-s.x,jogador.y-s.y)<30){ estrelas.splice(i,1); pontos+=20; document.getElementById('pontos').textContent=pontos; criarEstrela(); }
+  });
+  desenhar();
+  requestAnimationFrame(loop);
+}
+function desenhar(){
+  ctx.clearRect(0,0,800,420);
+  // Linhas quadra
+  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.beginPath(); ctx.moveTo(400,0); ctx.lineTo(400,420); ctx.stroke();
+  ctx.beginPath(); ctx.arc(400,210,80,0,Math.PI*2); ctx.stroke();
+  // Estrelas
+  estrelas.forEach(s=>{ ctx.font='22px Arial'; ctx.fillText('⭐',s.x-11,s.y+8); });
+  // Bots
+  bots.forEach(b=>{ ctx.font='28px Arial'; ctx.fillText(b.emoji,b.x-14,b.y+10); });
+  // Pegador
+  ctx.font='38px Arial'; ctx.fillText('🔴',pegador.x-19,pegador.y+13);
+  ctx.font='12px Arial'; ctx.fillStyle='#fff'; ctx.fillText('PEGADOR',pegador.x-30,pegador.y-28);
+  // Jogador
+  ctx.font='32px Arial'; ctx.fillText(pers,jogador.x-16,jogador.y+11);
+  ctx.font='11px Arial'; ctx.fillStyle='#fff'; ctx.fillText(document.getElementById('nick').value||'Você',jogador.x-20,jogador.y-24);
+}
 function entrar(){
   document.getElementById('inicio').style.display='none';
   document.getElementById('arena').style.display='block';
   document.getElementById('hudNick').textContent=document.getElementById('nick').value||'Player1';
   document.getElementById('hudPers').textContent=pers;
-  if(modo=='classico') document.getElementById('hudVidas').textContent='♾️';
-  else atualizarVidas();
-  mostrarPergunta();
-}
-function atualizarVidas(){
-  let html='';
-  for(let i=0;i<totalVidas;i++) html+=`<span class="${i<vidas?'':'perdida'}">❤️</span>`;
-  document.getElementById('hudVidas').innerHTML=html;
+  if(modo=='vidas'){ vidas=totalVidas; }
+  atualizarVidas();
+  jogoRodando=true;
+  loop();
+  // Timer
+  let t=setInterval(()=>{
+    if(!jogoRodando && foiPego) return;
+    tempo--; document.getElementById('tempo').textContent=tempo;
+    if(tempo<=0){ clearInterval(t); alert('⏱️ Tempo acabou! Você fez '+pontos+' pontos!'); location.reload(); }
+  },1000);
 }
 function mostrarPergunta(){
-  let q=perguntas[idx%perguntas.length]; idx++;
+  let q=perguntas[idxPergunta%perguntas.length]; idxPergunta++;
+  document.getElementById('perguntaBox').style.display='block';
   document.getElementById('textoPergunta').textContent=q.p;
   let div=document.getElementById('alts'); div.innerHTML='';
   q.alts.forEach((a,i)=>{
@@ -159,6 +269,7 @@ function mostrarPergunta(){
     b.onclick=()=>responder(i==q.certa,b,q);
     div.appendChild(b);
   });
+  document.getElementById('perguntaBox').scrollIntoView({behavior:'smooth'});
 }
 function responder(correta,btn,q){
   document.querySelectorAll('.alt').forEach(b=>b.disabled=true);
@@ -167,9 +278,16 @@ function responder(correta,btn,q){
     document.getElementById('pontos').textContent=pontos;
     document.getElementById('acertos').textContent=acertos;
     document.getElementById('rankList').textContent=`Você: 1º • ${pontos} pts`;
-    setTimeout(mostrarPergunta,900);
+    document.getElementById('statusJogo').textContent='✅ ACERTOU! +100 pts! Corre que o pegador vem aí!';
+    setTimeout(()=>{
+      document.getElementById('perguntaBox').style.display='none';
+      // Foge: joga jogador pra longe do pegador
+      jogador.x=100; jogador.y=100; pegador.x=650; pegador.y=300;
+      foiPego=false; jogoRodando=true; loop();
+    },900);
   }else{
     btn.classList.add('errada');
+    document.querySelectorAll('.alt').forEach((b,i)=>{ if(i==q.certa) b.classList.add('certa'); });
     if(modo=='vidas'){
       vidas--; atualizarVidas();
       if(vidas<=0){
@@ -179,21 +297,26 @@ function responder(correta,btn,q){
         },800);
         return;
       }
+      document.getElementById('statusJogo').textContent='❌ ERROU! Perdeu 1 vida! Você ainda tem '+vidas+' ❤️';
+    }else{
+      document.getElementById('statusJogo').textContent='❌ ERROU! Mas no modo SEM ELIMINAÇÃO você continua! Corre!';
     }
-    // Mostra a certa
-    document.querySelectorAll('.alt').forEach((b,i)=>{ if(i==q.certa) b.classList.add('certa'); });
-    setTimeout(mostrarPergunta,1200);
+    setTimeout(()=>{
+      document.getElementById('perguntaBox').style.display='none';
+      jogador.x=120; jogador.y=200; pegador.x=600; pegador.y=200;
+      foiPego=false; jogoRodando=true; loop();
+    },1400);
   }
 }
 function pedirReviver(){
   document.getElementById('msgReviver').textContent='📣 Professor! '+document.getElementById('nick').value+' pediu pra reviver!';
-  // Professor clica aqui pra reviver (botão escondido do professor - segredo: clicar 2x no título)
   setTimeout(()=>{
     if(confirm('PROFESSOR: Reviver '+document.getElementById('nick').value+' com ❤️❤️❤️ ?')){
       vidas=totalVidas; atualizarVidas();
       document.getElementById('eliminado').style.display='none';
       document.getElementById('arena').style.display='block';
-      mostrarPergunta();
+      jogador.x=100; jogador.y=100; pegador.x=650; pegador.y=300;
+      foiPego=false; jogoRodando=true; loop();
     }
   },500);
 }
