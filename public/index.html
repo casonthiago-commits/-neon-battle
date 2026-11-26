@@ -9,40 +9,156 @@
 .como{width:100%;max-width:420px;margin-top:12px;background:linear-gradient(180deg,rgba(34,255,136,.12),rgba(0,0,0,.2));border:1px solid rgba(34,255,136,.25);border-radius:20px;padding:14px;text-align:left;font-size:13px;line-height:1.7}.como b{color:#22ff88}
 #jogo{display:none;padding-bottom:190px}.top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px}.logo-mini{font-family:'Orbitron';font-weight:900;font-size:17px}.pill{background:rgba(0,0,0,.55);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.2);padding:8px 13px;border-radius:999px;font-weight:800;font-size:13px}.meus-pontos{position:fixed;top:64px;right:12px;background:linear-gradient(90deg,#ffe600,#ff9d00);color:#000;padding:9px 15px;border-radius:999px;font-weight:900;z-index:10;box-shadow:0 8px 24px rgba(255,230,0,.45)}#arena{margin:0 12px;height:52vh;min-height:360px;background:linear-gradient(180deg,rgba(0,80,50,.35),rgba(0,0,0,.5));border:1.5px solid rgba(34,255,136,.35);border-radius:28px;position:relative;overflow:hidden;touch-action:none}.player{position:absolute;transform:translate(-50%,-50%);text-align:center;pointer-events:none}.player.eu .avatar{filter:drop-shadow(0 0 16px #ffe600)}.player .avatar{font-size:36px;filter:drop-shadow(0 0 14px rgba(34,255,136,.8));animation:fy 2s ease-in-out infinite}@keyframes fy{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}.player .name{font-size:10px;background:rgba(0,0,0,.75);padding:3px 8px;border-radius:999px;font-weight:700;white-space:nowrap}.pts{font-size:11px;background:#ffe600;color:#000;font-weight:900;padding:2px 8px;border-radius:999px;display:inline-block;margin-top:3px}.acertos{font-size:10px;background:rgba(34,255,136,.25);padding:2px 7px;border-radius:999px;display:inline-block;margin-top:3px}#feed{padding:10px 12px}.feed-item{background:rgba(255,255,255,.07);backdrop-filter:blur(12px);border-left:3px solid #22ff88;padding:8px 12px;border-radius:14px;font-size:13px;margin:4px 0}.controls{position:fixed;bottom:90px;left:0;right:0;display:flex;justify-content:center;z-index:99;pointer-events:none}.joy-wrap{pointer-events:auto;text-align:center}.joy-label{font-size:10px;letter-spacing:2px;opacity:.6;font-weight:800;margin-bottom:6px;background:rgba(0,0,0,.5);padding:4px 10px;border-radius:999px;display:inline-block}#joy{width:140px;height:140px;background:rgba(34,255,136,.12);backdrop-filter:blur(14px);border:3px solid #22ff88;border-radius:50%;position:relative;box-shadow:0 0 30px rgba(34,255,136,.5)}#knob{width:60px;height:60px;background:linear-gradient(135deg,#22ff88,#00e5ff);border-radius:50%;position:absolute;left:40px;top:40px;box-shadow:0 0 24px #22ff88;display:flex;align-items:center;justify-content:center;font-size:26px}.btn-prof{width:calc(100% - 24px);margin:0 12px 10px;background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:14px;border-radius:18px;font-family:'Orbitron';font-weight:900;cursor:pointer;box-shadow:0 10px 24px rgba(34,255,136,.35)}#duelo{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(14px);z-index:30;display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}.duelo-card{background:linear-gradient(180deg,#1a1a35,#101024);border:1.5px solid #22ff88;border-radius:28px;padding:24px;width:100%;max-width:400px;text-align:center;box-shadow:0 0 60px rgba(34,255,136,.35);margin:auto}.duelo-card button{width:100%;padding:15px;margin:6px 0;border-radius:16px;border:1px solid rgba(34,255,136,.4);background:rgba(34,255,136,.08);color:#fff;font-size:15px;font-weight:700;cursor:pointer}.duelo-card button:active{background:#22ff88;color:#000}.timer-duelo{width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;margin:10px 0}.timer-duelo i{display:block;height:100%;background:#ff2d95;animation:tm 15s linear forwards}@keyframes tm{from{width:100%}to{width:0%}}
 </style></head><body><div class="bg"><div class="orb" style="width:200px;height:200px;background:#22ff88;top:10%;left:10%"></div><div class="orb" style="width:180px;height:180px;background:#ff2d95;bottom:20%;right:5%"></div><div class="orb" style="width:140px;height:140px;background:#00e5ff;top:60%;left:60%"></div></div><div class="grid"></div>
-<div id="menu"><div class="topbar"><div class="live"><span class="dot"></span> AO VIVO • 30 ALUNOS</div><div class="versao">v8.0 ✨ TURMA + SOLO</div></div><div class="hero"><div class="hero-badge">🏃 EDUCAÇÃO FÍSICA • PEGA-PEGA</div><h1>PEGA<br><span class="g">E RESPONDE</span> <span class="p">⚡</span></h1><p>Encostou? <b>Responde e ganha +100!</b><br>Ninguém é eliminado • Todos jogam até o fim!</p></div><div class="glass"><div class="label">👤 SEU NICK</div><div class="field"><span class="icon">😎</span><input id="nome" placeholder="Ex: Thiaguinho..." value="Player1" maxlength="14"></div><div class="label">🎭 ESCOLHA SEU PERSONAGEM</div><div class="skins" id="skins"></div><div class="label">🔑 CÓDIGO DA SALA</div><div class="codigo-row"><div class="field"><span class="icon">🔑</span><input id="codigo" value="NEON1"></div><button class="btn-copy" onclick="copiarLink()">🔗</button></div><button class="btn-jogar" onclick="entrar()">👥 ENTRAR NA ARENA - TURMA</button><button class="btn-solo" onclick="entrarSolo()">🤖 JOGAR SOZINHO vs SISTEMA</button><div class="micro"><i></i> Sem baixar nada • 1 link pra turma toda • Máx 30 jogadores</div></div><div class="vagas-wrap"><div class="vagas-top"><span>👥 VAGAS PREENCHIDAS</span><span id="vagasTxt">0 / 30</span></div><div class="vagas-bar"><i id="vagasBar" style="width:0%"></i></div></div><div class="como">🏃 <b>COMO JOGA? - SUPER FÁCIL!</b><br>1️⃣ Move com o joystick ou <b>toca na arena</b><br>2️⃣ <b>ENCOSTE em alguém</b> - o DUELO abre sozinho, sem clicar!<br>3️⃣ Responda a pergunta<br>✅ Acertou = <b>+100 PTS</b><br>❌ Errou = continua jogando, ninguém sai!<br>👑 No fim de 5 min, quem tiver <b>mais pontos</b> vence!<br>🤖 <b>MODO SOLO:</b> Você contra 5 robôs que correm atrás de você!</div><div class="stats"><div class="stat"><b>⚡ 120</b><span>PERGUNTAS</span></div><div class="stat"><b>👥 30</b><span>ALUNOS</span></div><div class="stat"><b>🤖 SOLO</b><span>VS SISTEMA</span></div></div></div>
-<div id="jogo"><div class="top"><div class="logo-mini">🏃 PEGA <span style="color:#22ff88">E RESPONDE</span> <span style="font-size:10px;background:#ff2d50;padding:3px 7px;border-radius:999px;vertical-align:middle">LIVE</span></div><div class="pill">⏰ <span id="tempo">5:00</span> • 👥 <span id="vivos">0</span></div></div><div class="meus-pontos" id="meusPontos">⭐ 0 PTS • ✅ 0 acertos</div><button class="btn-prof" id="btnProf" onclick="comecar()">▶️ PROFESSOR: INICIAR PARTIDA</button><div id="arena"></div><div style="text-align:center;margin:10px"><p style="font-size:13px;opacity:.8">🏃 <b>SÓ ENCOSTAR!</b> Corra atrás de alguém que o DUELO abre sozinho!</p><p style="font-size:12px;opacity:.5">🕹️ Use o joystick ou toque na arena pra mover</p></div><div id="feed"></div><div class="controls"><div class="joy-wrap"><div class="joy-label">🕹️ SEGURE E ARRASTE PRA MOVER</div><div id="joy"><div id="knob">🕹️</div></div></div></div></div>
+<div id="menu"><div class="topbar"><div class="live"><span class="dot"></span> AO VIVO • 30 ALUNOS</div><div class="versao">v9.0 ✨ SEM REPETIR</div></div><div class="hero"><div class="hero-badge">🏃 EDUCAÇÃO FÍSICA • PEGA-PEGA</div><h1>PEGA<br><span class="g">E RESPONDE</span> <span class="p">⚡</span></h1><p>Encostou? <b>Responde e ganha +100!</b><br>120 perguntas sem repetir • Ninguém é eliminado!</p></div><div class="glass"><div class="label">👤 SEU NICK</div><div class="field"><span class="icon">😎</span><input id="nome" placeholder="Ex: Thiaguinho..." value="Player1" maxlength="14"></div><div class="label">🎭 ESCOLHA SEU PERSONAGEM</div><div class="skins" id="skins"></div><div class="label">🔑 CÓDIGO DA SALA</div><div class="codigo-row"><div class="field"><span class="icon">🔑</span><input id="codigo" value="NEON1"></div><button class="btn-copy" onclick="copiarLink()">🔗</button></div><button class="btn-jogar" onclick="entrar()">👥 ENTRAR NA ARENA - TURMA</button><button class="btn-solo" onclick="entrarSolo()">🤖 JOGAR SOZINHO vs SISTEMA</button><div class="micro"><i></i> Sem baixar nada • 1 link pra turma toda • Máx 30 jogadores</div></div><div class="vagas-wrap"><div class="vagas-top"><span>👥 VAGAS PREENCHIDAS</span><span id="vagasTxt">0 / 30</span></div><div class="vagas-bar"><i id="vagasBar" style="width:0%"></i></div></div><div class="como">🏃 <b>COMO JOGA? - SUPER FÁCIL!</b><br>1️⃣ Move com o joystick ou <b>toca na arena</b><br>2️⃣ <b>ENCOSTE em alguém</b> - o DUELO abre sozinho, sem clicar!<br>3️⃣ Responda a pergunta<br>✅ Acertou = <b>+100 PTS</b><br>❌ Errou = continua jogando, ninguém sai!<br>👑 No fim de 5 min, quem tiver <b>mais pontos</b> vence!<br>🤖 <b>MODO SOLO:</b> Você contra 5 robôs que correm atrás de você! 120 perguntas sem repetir!</div><div class="stats"><div class="stat"><b>⚡ 120</b><span>PERGUNTAS</span></div><div class="stat"><b>👥 30</b><span>ALUNOS</span></div><div class="stat"><b>🤖 SOLO</b><span>VS SISTEMA</span></div></div></div>
+<div id="jogo"><div class="top"><div class="logo-mini">🏃 PEGA <span style="color:#22ff88">E RESPONDE</span> <span style="font-size:10px;background:#ff2d50;padding:3px 7px;border-radius:999px;vertical-align:middle">LIVE</span></div><div class="pill">⏰ <span id="tempo">5:00</span> • 👥 <span id="vivos">0</span></div></div><div class="meus-pontos" id="meusPontos">⭐ 0 PTS • ✅ 0 acertos</div><button class="btn-prof" id="btnProf" onclick="comecar()">▶️ PROFESSOR: INICIAR PARTIDA</button><div id="arena"></div><div style="text-align:center;margin:10px"><p style="font-size:13px;opacity:.8">🏃 <b>SÓ ENCOSTAR!</b> Corra atrás de alguém que o DUELO abre sozinho!</p><p style="font-size:12px;opacity:.5">🕹️ Use o joystick ou toque na arena pra mover • <span id="restamTxt"></span></p></div><div id="feed"></div><div class="controls"><div class="joy-wrap"><div class="joy-label">🕹️ SEGURE E ARRASTE PRA MOVER</div><div id="joy"><div id="knob">🕹️</div></div></div></div></div>
 <div id="duelo"><div class="duelo-card"><div style="font-size:48px">🏃⚔️</div><h3 id="dueloVs" style="font-family:'Orbitron';margin:8px 0">DUELO!</h3><div class="timer-duelo"><i></i></div><p id="dueloPergunta" style="font-size:18px;font-weight:700;line-height:1.4"></p><div id="dueloOps" style="margin-top:14px"></div></div></div>
 <script src="/socket.io/socket.io.js"></script><script>
 let socket=io(),minhaSkin='🦊',pos={x:400,y:250},meuNome='',alvoAtual=null,emDuelo=false;
 let modo='turma',bots=[],meusPontosSolo=0,meusAcertosSolo=0,tempoSolo=300,soloRodando=false,cooldownSolo=0;
 let perguntasSolo=[
-{q:"Qual esporte usa rede e a bola NÃO pode cair?",a:["Vôlei","Futebol","Basquete","Tênis"],c:0},
-{q:"Quantos jogadores de linha tem o Futsal?",a:["5","11","7","6"],c:0},
-{q:"O que é AQUECIMENTO?",a:["Preparar o corpo","Dormir","Comer","Jogar videogame"],c:0},
+{q:"Qual esporte usa rede e a bola NÃO pode cair no chão?",a:["Vôlei","Futebol","Basquete","Tênis"],c:0},
+{q:"Quantos jogadores de linha tem o Futsal em quadra por time?",a:["5","11","7","6"],c:0},
+{q:"Qual músculo usamos no AGACHAMENTO?",a:["Quadríceps","Bíceps","Peito","Pescoço"],c:0},
+{q:"O que é AQUECIMENTO?",a:["Preparar o corpo p/ exercício","Dormir","Comer","Jogar videogame"],c:0},
+{q:"Qual capacidade física é correr rápido?",a:["Velocidade","Força","Flexibilidade","Equilíbrio"],c:0},
 {q:"Qual esporte usa CESTA?",a:["Basquete","Vôlei","Handebol","Natação"],c:0},
 {q:"O que é ALONGAMENTO?",a:["Esticar os músculos","Correr","Pular","Lutar"],c:0},
 {q:"Quantas faltas para ser expulso no Basquete?",a:["5","3","10","2"],c:0},
 {q:"Qual esporte usa RAQUETE?",a:["Tênis","Judô","Vôlei","Futebol"],c:0},
+{q:"O que melhora a PRANCHA?",a:["Core / Abdômen","Braço só","Perna só","Nada"],c:0},
 {q:"Qual é o esporte mais popular do Brasil?",a:["Futebol","Tênis","Golfe","Surfe"],c:0},
-{q:"Handebol usa qual parte do corpo?",a:["Mãos","Pés","Cabeça","Joelho"],c:0},
+{q:"O que devemos fazer ANTES de treinar?",a:["Aquecimento","Dormir","Comer pizza","Jogar"],c:0},
+{q:"Qual parte do corpo usamos no CABECEIO?",a:["Cabeça","Pé","Mão","Joelho"],c:0},
+{q:"Handebol usa qual parte do corpo para jogar?",a:["Mãos","Pés","Cabeça","Joelho"],c:0},
+{q:"O que é FREQUÊNCIA CARDÍACA?",a:["Batimentos do coração","Força do chute","Altura do pulo","Peso"],c:0},
+{q:"Qual esporte é jogado na piscina com gol?",a:["Polo Aquático","Vôlei","Basquete","Judô"],c:0},
+{q:"Quantas tempos tem uma partida de Futsal?",a:["2 tempos de 20 min","1 tempo","4 tempos","3 tempos"],c:0},
+{q:"Qual é a cor do cartão de expulsão no Futebol?",a:["Vermelho","Verde","Azul","Rosa"],c:0},
 {q:"O que é HIDRATAÇÃO?",a:["Beber água","Comer doce","Dormir","Correr"],c:0},
+{q:"Qual parte do corpo é o BÍCEPS?",a:["Braço","Perna","Costas","Pescoço"],c:0},
 {q:"Qual esporte é lutar no tatame?",a:["Judô","Tênis","Futebol","Natação"],c:0},
-{q:"Quantos jogadores tem o Vôlei em quadra?",a:["6","5","11","7"],c:0},
+{q:"O que é RESISTÊNCIA?",a:["Aguentar esforço por muito tempo","Ser forte 1 vez","Pular alto","Ser rápido 1 vez"],c:0},
+{q:"Quantos jogadores tem o Vôlei em quadra por time?",a:["6","5","11","7"],c:0},
+{q:"Qual esporte usa BICICLETA?",a:["Ciclismo","Judô","Basquete","Vôlei"],c:0},
 {q:"O que é FLEXIBILIDADE?",a:["Esticar bem o corpo","Ser forte","Ser rápido","Ser alto"],c:0},
 {q:"O que é SEDENTARISMO?",a:["Falta de atividade física","Praticar esporte","Comer bem","Dormir pouco"],c:0},
+{q:"Qual esporte usa LUVA e ringue?",a:["Boxe","Vôlei","Tênis","Futebol"],c:0},
 {q:"Qual vitamina pegamos do SOL?",a:["Vitamina D","Vitamina A","Vitamina C","Vitamina B"],c:0},
 {q:"O que é EQUILÍBRIO?",a:["Manter o corpo sem cair","Correr rápido","Pular alto","Ser forte"],c:0},
 {q:"Qual esporte é correr, saltar e lançar?",a:["Atletismo","Futebol","Basquete","Judô"],c:0},
+{q:"O que é FORÇA?",a:["Vencer uma resistência","Ser rápido","Ser flexível","Ser alto"],c:0},
+{q:"Quantos ossos tem o corpo humano adulto?",a:["206","100","50","500"],c:0},
 {q:"Qual a melhor bebida para hidratar?",a:["Água","Refrigerante","Suco de caixinha","Energético"],c:0},
+{q:"O que é SAÚDE segundo a OMS?",a:["Bem-estar físico, mental e social","Só não estar doente","Ser forte","Ser magro"],c:0},
+{q:"Qual esporte usa PATINS?",a:["Patinação","Futebol","Vôlei","Judô"],c:0},
 {q:"Qual órgão bombeia o sangue?",a:["Coração","Pulmão","Fígado","Rim"],c:0},
+{q:"Qual esporte usa TACO e bola pequena?",a:["Beisebol","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é AGILIDADE?",a:["Mudar de direção rápido","Ser forte","Ser alto","Dormir bem"],c:0},
+{q:"Qual esporte é jogar com os pés e fazer gol?",a:["Futebol","Basquete","Vôlei","Tênis"],c:0},
+{q:"O que é COORDENAÇÃO MOTORA?",a:["Controlar os movimentos do corpo","Ser forte","Correr rápido","Pular alto"],c:0},
+{q:"Quantos jogadores tem o Basquete em quadra por time?",a:["5","6","11","7"],c:0},
+{q:"Qual esporte é nadar na piscina?",a:["Natação","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é POSTURA?",a:["Posição correta do corpo","Correr rápido","Ser forte","Ser alto"],c:0},
+{q:"Qual esporte usa ARCO e FLECHA?",a:["Tiro com Arco","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é RITMO?",a:["Cadência dos movimentos","Força","Peso","Altura"],c:0},
+{q:"Qual esporte é lutar com espada?",a:["Esgrima","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é AQUECIMENTO ESPECÍFICO?",a:["Aquecer p/ o esporte que vai jogar","Dormir","Comer","Jogar videogame"],c:0},
+{q:"Qual esporte usa BOLA e CESTA alta?",a:["Basquete","Futebol","Vôlei","Tênis"],c:0},
+{q:"O que é VOLTA À CALMA?",a:["Diminuir o ritmo no final","Correr mais","Dormir no meio","Comer"],c:0},
+{q:"Qual esporte é andar de SKATE?",a:["Skate","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é IMPULSÃO?",a:["Força para saltar","Ser alto","Dormir","Comer"],c:0},
+{q:"Qual esporte é SURFAR nas ondas?",a:["Surfe","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é LATERALIDADE?",a:["Usar lado direito e esquerdo","Ser forte","Correr rápido","Pular alto"],c:0},
+{q:"Qual esporte usa BOLA OVAL?",a:["Rugby","Futebol","Vôlei","Basquete"],c:0},
+{q:"O que é ESPORTE COLETIVO?",a:["Jogado em equipe","Sozinho","Com 1 pessoa","Sem regra"],c:0},
+{q:"Qual esporte é VÔLEI DE PRAIA?",a:["Vôlei de Praia","Futebol","Basquete","Judô"],c:0},
+{q:"O que é ESPORTE INDIVIDUAL?",a:["Praticado sozinho","Em equipe","Com 11","Sem regra"],c:0},
+{q:"Qual esporte usa REDE e PETECA?",a:["Badminton","Futebol","Vôlei","Basquete"],c:0},
 {q:"O que é FAIR PLAY?",a:["Jogo limpo, respeito","Trapacear","Xingar","Empurrar"],c:0},
+{q:"Qual esporte é CORRER 100m?",a:["Atletismo","Futebol","Vôlei","Judô"],c:0},
+{q:"O que são REGRAS do jogo?",a:["Combinados para jogar justo","Bagunça","Sem limite","Vale tudo"],c:0},
+{q:"Qual esporte é fazer GOL com as mãos?",a:["Handebol","Futebol","Vôlei","Tênis"],c:0},
+{q:"O que é TRABALHO EM EQUIPE?",a:["Ajudar o time","Jogar sozinho","Não passar a bola","Xingar"],c:0},
+{q:"Qual esporte é GINÁSTICA com fita?",a:["Ginástica Rítmica","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é SUPERAÇÃO?",a:["Vencer seus limites","Desistir","Faltar","Dormir"],c:0},
+{q:"Qual esporte é lutar com luvas e chutes?",a:["Muay Thai","Futebol","Vôlei","Tênis"],c:0},
+{q:"O que é DISCIPLINA no esporte?",a:["Seguir treino e regras","Faltar sempre","Chegar atrasado","Bagunçar"],c:0},
+{q:"Qual esporte é jogar XADREZ?",a:["Xadrez","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é CONCENTRAÇÃO?",a:["Focar na atividade","Ficar distraído","Conversar","Mexer no celular"],c:0},
+{q:"Qual esporte é ANDAR A CAVALO?",a:["Hipismo","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é RESPEITO ao adversário?",a:["Cumprimentar e não xingar","Xingar","Empurrar","Trapacear"],c:0},
+{q:"Qual esporte é REMAR no barco?",a:["Remo","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é ALIMENTAÇÃO SAUDÁVEL?",a:["Comer frutas, legumes e beber água","Só comer doce","Só beber refri","Pular refeição"],c:0},
+{q:"Qual esporte é ESCALAR parede?",a:["Escalada","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é SONO para o atleta?",a:["Descansar para recuperar","Ficar acordado","Jogar a noite toda","Não dormir"],c:0},
+{q:"Qual esporte é TÊNIS DE MESA?",a:["Tênis de Mesa","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é LESÃO?",a:["Machucado no corpo","Vitória","Gol","Ponto"],c:0},
+{q:"Qual esporte é DANÇAR?",a:["Dança","Futebol","Vôlei","Judô"],c:0},
+{q:"O que fazer quando se machuca?",a:["Avisar o professor e parar","Continuar jogando","Esconder","Correr mais"],c:0},
+{q:"Qual esporte é jogar QUEIMADA?",a:["Queimada","Futebol","Vôlei","Basquete"],c:0},
+{q:"O que é AQUECIMENTO GERAL?",a:["Aquecer o corpo todo","Só o braço","Só dormir","Só comer"],c:0},
+{q:"Qual esporte é jogar FUTSAL?",a:["Futsal","Tênis","Vôlei","Judô"],c:0},
+{q:"O que é VELOCIDADE DE REAÇÃO?",a:["Responder rápido a um estímulo","Ser alto","Ser forte","Dormir"],c:0},
+{q:"Qual esporte é BASQUETE 3x3?",a:["Basquete 3x3","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é POTÊNCIA?",a:["Força + velocidade juntas","Só força","Só dormir","Só comer"],c:0},
+{q:"Qual esporte é VÔLEI SENTADO?",a:["Vôlei Sentado","Futebol","Basquete","Judô"],c:0},
+{q:"O que é INCLUSÃO no esporte?",a:["Todos podem jogar","Só os melhores","Só meninos","Só meninas"],c:0},
+{q:"Qual esporte é correr MARATONA?",a:["Atletismo","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é ESTRATÉGIA?",a:["Plano para vencer","Bagunça","Sem plano","Jogar sozinho"],c:0},
+{q:"Qual esporte é jogar HÓQUEI?",a:["Hóquei","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é TÁTICA?",a:["Como o time joga","Ser alto","Ser forte","Dormir"],c:0},
+{q:"Qual esporte é jogar GOLFE?",a:["Golfe","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é TÉCNICA?",a:["Jeito certo de fazer o movimento","Bagunça","Força bruta","Sem treino"],c:0},
+{q:"Qual esporte é jogar CRÍQUETE?",a:["Críquete","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é TREINO?",a:["Praticar para melhorar","Faltar","Dormir","Jogar videogame"],c:0},
+{q:"Qual esporte é jogar POLO?",a:["Polo","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é AQUECIMENTO ARTICULAR?",a:["Mexer as articulações","Dormir","Comer","Correr sem parar"],c:0},
+{q:"Qual esporte é BEACH TENNIS?",a:["Beach Tennis","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é ARTICULAÇÃO?",a:["Junção dos ossos","Músculo","Pele","Cabelo"],c:0},
+{q:"Qual esporte é FRESCOBOL?",a:["Frescobol","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é MÚSCULO?",a:["Parte do corpo que faz força","Osso","Pele","Unha"],c:0},
+{q:"Qual esporte é CAPOEIRA?",a:["Capoeira","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é OSSO?",a:["Estrutura que sustenta o corpo","Músculo","Pele","Cabelo"],c:0},
+{q:"Qual esporte é KARATÊ?",a:["Karatê","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é CORAÇÃO?",a:["Órgão que bombeia sangue","Osso","Músculo da perna","Pele"],c:0},
+{q:"Qual esporte é TAEKWONDO?",a:["Taekwondo","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é PULMÃO?",a:["Órgão que respira","Osso","Músculo","Pele"],c:0},
+{q:"Qual esporte é JIU-JITSU?",a:["Jiu-Jitsu","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é CÉREBRO?",a:["Comanda o corpo","Osso","Músculo","Pele"],c:0},
+{q:"Qual esporte é FUTEBOL AMERICANO?",a:["Futebol Americano","Futebol","Vôlei","Judô"],c:0},
+{q:"De onde vem a ENERGIA para o corpo?",a:["Dos alimentos","Do sono só","Do celular","Da TV"],c:0},
+{q:"Qual esporte é VÔLEI DE AREIA?",a:["Vôlei de Praia","Futebol","Basquete","Judô"],c:0},
+{q:"O que é PROTEÍNA?",a:["Ajuda a construir músculo","Só açúcar","Só gordura","Só água"],c:0},
+{q:"Qual esporte é HANDEBOL DE AREIA?",a:["Handebol de Praia","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é CARBOIDRATO?",a:["Dá energia","Só proteína","Só água","Só vitamina"],c:0},
+{q:"Qual esporte é FUTVÔLEI?",a:["Futevôlei","Futebol","Basquete","Judô"],c:0},
+{q:"O que é VITAMINA?",a:["Ajuda o corpo a funcionar","Só açúcar","Só sal","Só gordura"],c:0},
+{q:"Qual esporte é PING PONG?",a:["Tênis de Mesa","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é MINERAL?",a:["Como cálcio, ferro","Só açúcar","Só água","Só gordura"],c:0},
+{q:"O que é OBESIDADE?",a:["Excesso de peso que prejudica saúde","Ser forte","Ser alto","Ser rápido"],c:0},
+{q:"Qual esporte é PEGA-PEGA?",a:["Pega-Pega","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é PRESSÃO ARTERIAL?",a:["Força do sangue nas artérias","Peso","Altura","Força do chute"],c:0},
+{q:"Qual esporte é ESCONDE-ESCONDE?",a:["Esconde-Esconde","Futebol","Vôlei","Judô"],c:0},
+{q:"O que é DIABETES?",a:["Problema com açúcar no sangue","Ser forte","Ser alto","Ser rápido"],c:0},
 ];
+// FILA SEM REPETIR - CORREÇÃO v9
+let filaSolo=[];
+function proximaPerguntaSolo(){
+  if(filaSolo.length===0){
+    filaSolo=[...perguntasSolo];
+    for(let i=filaSolo.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[filaSolo[i],filaSolo[j]]=[filaSolo[j],filaSolo[i]];}
+  }
+  let p=filaSolo.pop();
+  let alts=[...p.a]; let corretaTexto=p.a[p.c];
+  for(let i=alts.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[alts[i],alts[j]]=[alts[j],alts[i]];}
+  return {q:p.q,a:alts,c:alts.indexOf(corretaTexto)};
+}
 let skins=['🦊','🐲','⚽','🏀','🏐','🥋','🏋️','🤸','🏃','🚴','🦁','🦸'];let div=document.getElementById('skins');skins.forEach(s=>{let b=document.createElement('div');b.className='skin'+(s==='🦊'?' sel':'');b.innerText=s;b.onclick=()=>{minhaSkin=s;if(navigator.vibrate)navigator.vibrate(10);document.querySelectorAll('.skin').forEach(e=>e.classList.remove('sel'));b.classList.add('sel')};div.appendChild(b)});
 function copiarLink(){let l=location.origin+'?sala='+document.getElementById('codigo').value;navigator.clipboard.writeText(l).then(()=>alert('🔗 Link copiado! Manda no WhatsApp!'))}
 function entrar(){modo='turma';meuNome=document.getElementById('nome').value||'Player';if(navigator.vibrate)navigator.vibrate([20,30,20]);socket.emit('entrar',{nome:meuNome,skin:minhaSkin});document.getElementById('menu').style.display='none';document.getElementById('jogo').style.display='block';window.scrollTo(0,0)}
 function comecar(){socket.emit('comecar')}
 function entrarSolo(){
-  modo='solo';meuNome=document.getElementById('nome').value||'Player';
+  modo='solo';meuNome=document.getElementById('nome').value||'Player';filaSolo=[];
   if(navigator.vibrate)navigator.vibrate([20,30,20]);
   document.getElementById('menu').style.display='none';document.getElementById('jogo').style.display='block';document.getElementById('btnProf').style.display='none';
   window.scrollTo(0,0);
@@ -56,7 +172,7 @@ function entrarSolo(){
   meusPontosSolo=0;meusAcertosSolo=0;tempoSolo=300;soloRodando=true;
   document.getElementById('meusPontos').innerText='⭐ 0 PTS • ✅ 0 acertos';
   document.getElementById('vivos').innerText='1 + 5 robôs';
-  alert('🤖 MODO SOLO! Você contra 5 robôs! Encoste em um robô pra duelar! Acertou = +100!');
+  alert('🤖 MODO SOLO! Você contra 5 robôs! 120 perguntas SEM REPETIR!');
   setInterval(()=>{
     if(!soloRodando||modo!=='solo')return;
     bots.forEach(b=>{
@@ -70,14 +186,14 @@ function entrarSolo(){
     euDiv.innerHTML=`<div class="avatar">${minhaSkin}</div><div class="name">${meuNome}</div><div class="pts">⭐ ${meusPontosSolo}</div><div class="acertos">✅ ${meusAcertosSolo} acertos</div>`;
     arena.appendChild(euDiv);
     bots.forEach(b=>{let d=document.createElement('div');d.className='player';d.style.left=(b.x/800*100)+'%';d.style.top=(b.y/500*100)+'%';d.innerHTML=`<div class="avatar">${b.skin}</div><div class="name">${b.nome}</div><div class="pts">⭐ ${b.pontos}</div><div class="acertos">✅ ${b.acertos} acertos</div>`;arena.appendChild(d);});
+    document.getElementById('restamTxt').innerText='Restam '+filaSolo.length+' perguntas novas';
   },50);
   setInterval(()=>{if(!soloRodando||modo!=='solo')return;tempoSolo--;let min=Math.floor(tempoSolo/60);let seg=String(tempoSolo%60).padStart(2,'0');document.getElementById('tempo').innerText=min+':'+seg;if(tempoSolo<=0){soloRodando=false;mostrarPodioSolo();}},1000);
 }
 function abrirDueloSolo(bot){
   emDuelo=true;cooldownSolo=Date.now();if(navigator.vibrate)navigator.vibrate([50,50,50]);
-  let p=perguntasSolo[Math.floor(Math.random()*perguntasSolo.length)];
-  let alts=[...p.a];let corretaTexto=p.a[p.c];for(let i=alts.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[alts[i],alts[j]]=[alts[j],alts[i]];}
-  let corretaIndex=alts.indexOf(corretaTexto);
+  let p=proximaPerguntaSolo();
+  let alts=p.a; let corretaIndex=p.c;
   document.getElementById('duelo').style.display='flex';document.getElementById('dueloVs').innerText='⚔️ VOCÊ ENCOSTOU EM '+bot.nome+'!';document.getElementById('dueloPergunta').innerText=p.q;
   let ops=document.getElementById('dueloOps');ops.innerHTML='';
   alts.forEach((alt,i)=>{let b=document.createElement('button');b.innerText=alt;b.onclick=()=>{document.getElementById('duelo').style.display='none';emDuelo=false;if(i===corretaIndex){meusPontosSolo+=100;meusAcertosSolo++;alert('✅ ACERTOU! +100 PTS! Total: '+meusPontosSolo);}else{alert('❌ Errou! O robô escapou! Continua jogando!');}document.getElementById('meusPontos').innerText=`⭐ ${meusPontosSolo} PTS • ✅ ${meusAcertosSolo} acertos`;bot.x=Math.random()*700+50;bot.y=Math.random()*400+50;};ops.appendChild(b);});
@@ -85,7 +201,7 @@ function abrirDueloSolo(bot){
 function mostrarPodioSolo(){
   let div2=document.createElement('div');div2.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px';
   let venceu=meusPontosSolo>=200;
-  div2.innerHTML=`<div style="background:linear-gradient(180deg,#1a1a35,#0f0f22);border:2px solid #ffe600;border-radius:28px;padding:26px;width:100%;max-width:420px"><div style="font-size:64px">${venceu?'🏆':'🤖'}</div><h1 style="font-family:Orbitron">${venceu?'VOCÊ VENCEU O SISTEMA!':'FIM DO MODO SOLO!'}</h1><p style="opacity:.7">Você contra 5 robôs!</p><div style="background:rgba(255,230,0,.15);border-radius:16px;padding:16px;margin:16px 0"><b style="font-size:28px">⭐ ${meusPontosSolo} PTS</b><br><span>✅ ${meusAcertosSolo} acertos</span></div><button onclick="location.reload()" style="background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:15px;border-radius:16px;font-weight:900;width:100%;font-family:Orbitron;cursor:pointer">🔁 JOGAR DE NOVO</button></div>`;
+  div2.innerHTML=`<div style="background:linear-gradient(180deg,#1a1a35,#0f0f22);border:2px solid #ffe600;border-radius:28px;padding:26px;width:100%;max-width:420px"><div style="font-size:64px">${venceu?'🏆':'🤖'}</div><h1 style="font-family:Orbitron">${venceu?'VOCÊ VENCEU O SISTEMA!':'FIM DO MODO SOLO!'}</h1><p style="opacity:.7">Você contra 5 robôs! 120 perguntas sem repetir!</p><div style="background:rgba(255,230,0,.15);border-radius:16px;padding:16px;margin:16px 0"><b style="font-size:28px">⭐ ${meusPontosSolo} PTS</b><br><span>✅ ${meusAcertosSolo} acertos</span></div><button onclick="location.reload()" style="background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:15px;border-radius:16px;font-weight:900;width:100%;font-family:Orbitron;cursor:pointer">🔁 JOGAR DE NOVO</button></div>`;
   document.body.appendChild(div2);
 }
 let joy=document.getElementById('joy'),knob=document.getElementById('knob'),movendo=false,dx=0,dy=0;
@@ -99,5 +215,5 @@ socket.on('comecou',()=>alert('🏃 COMEÇOU! Encoste em alguém pra duelar! Nin
 socket.on('duelo',d=>{if(emDuelo)return;emDuelo=true;if(navigator.vibrate)navigator.vibrate([50,50,50]);alvoAtual=d.alvoId;document.getElementById('duelo').style.display='flex';document.getElementById('dueloVs').innerText='⚔️ VOCÊ ENCOSTOU EM '+d.oponente+'!';document.getElementById('dueloPergunta').innerText=d.pergunta.q;let ops=document.getElementById('dueloOps');ops.innerHTML='';d.pergunta.a.forEach((alt,i)=>{let b=document.createElement('button');b.innerText=alt;b.onclick=()=>{socket.emit('responder',{correta:i===d.pergunta.c,alvoId:alvoAtual});document.getElementById('duelo').style.display='none';emDuelo=false};ops.appendChild(b)})});
 socket.on('duelo-fim',d=>{emDuelo=false;if(d.resultado==='ganhou'){if(navigator.vibrate)navigator.vibrate(100);alert('✅ ACERTOU! +100 PTS! Total: '+d.acertos+' acertos')}else alert('❌ Errou! Sem problema, continua jogando! Encoste em outro!')});
 socket.on('podio',ranking=>{let div2=document.createElement('div');div2.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(14px);z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;overflow-y:auto';let p1=ranking[0]?.nome||'---',p2=ranking[1]?.nome||'---',p3=ranking[2]?.nome||'---';let k1=ranking[0]?.pontos||0,k2=ranking[1]?.pontos||0,k3=ranking[2]?.pontos||0;let a1=ranking[0]?.acertos||0,a2=ranking[1]?.acertos||0,a3=ranking[2]?.acertos||0;let s1=ranking[0]?.skin||'🏆',s2=ranking[1]?.skin||'🥈',s3=ranking[2]?.skin||'🥉';div2.innerHTML=`<div style="background:linear-gradient(180deg,#1a1a35,#0f0f22);border:2px solid #ffe600;border-radius:28px;padding:26px;width:100%;max-width:420px;box-shadow:0 0 60px rgba(255,230,0,.35);margin:auto"><div style="font-size:64px">🏆</div><h1 style="font-family:Orbitron;margin:0">PÓDIO FINAL!</h1><p style="opacity:.7">Top 3 de 30 jogadores! Ninguém foi eliminado!</p><div style="display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:22px 0"><div><div style="font-size:36px">${s2}</div><div style="background:#94a3b8;padding:12px;border-radius:14px 14px 0 0;height:90px"><b>${p2}</b><br>⭐ ${k2} pts<br><span style="font-size:12px">✅ ${a2} acertos</span></div></div><div><div style="font-size:48px">${s1}</div><div style="background:linear-gradient(180deg,#ffe600,#ff9d00);color:#000;padding:14px;border-radius:14px 14px 0 0;height:130px"><b>${p1}</b><br>👑 CAMPEÃO<br>⭐ ${k1} pts<br><span style="font-size:12px">✅ ${a1} acertos</span></div></div><div><div style="font-size:36px">${s3}</div><div style="background:#b45309;padding:12px;border-radius:14px 14px 0 0;height:70px"><b>${p3}</b><br>⭐ ${k3} pts<br><span style="font-size:12px">✅ ${a3} acertos</span></div></div></div><button onclick="location.reload()" style="background:linear-gradient(90deg,#22ff88,#00e5ff);color:#000;border:none;padding:15px;border-radius:16px;font-weight:900;width:100%;font-family:Orbitron;cursor:pointer">🔁 JOGAR DE NOVO</button></div>`;document.body.appendChild(div2)});
-socket.on('estado',s=>{if(modo!=='turma')return;let min=Math.floor(s.tempo/60);let seg=String(s.tempo%60).padStart(2,'0');document.getElementById('tempo').innerText=min+':'+seg;let total=s.total||Object.keys(s.jogadores).length;document.getElementById('vivos').innerText=total+'/30';document.getElementById('vagasTxt').innerText=total+' / 30';document.getElementById('vagasBar').style.width=(total/30*100)+'%';let arena=document.getElementById('arena');arena.innerHTML='';Object.values(s.jogadores).forEach(j=>{let d=document.createElement('div');d.className='player'+(j.nome===meuNome?' eu':'');d.style.left=(j.x/800*100)+'%';d.style.top=(j.y/500*100)+'%';d.innerHTML=`<div class="avatar">${j.skin}</div><div class="name">${j.nome}</div><div class="pts">⭐ ${j.pontos||0}</div><div class="acertos">✅ ${j.acertos||0} acertos</div>`;arena.appendChild(d)});let eu=Object.values(s.jogadores).find(j=>j.nome===meuNome);if(eu){document.getElementById('meusPontos').innerText=`⭐ ${eu.pontos} PTS • ✅ ${eu.acertos} acertos`}document.getElementById('feed').innerHTML=s.feed.map(f=>`<div class="feed-item">${f}</div>`).join('')});
+socket.on('estado',s=>{if(modo!=='turma')return;let min=Math.floor(s.tempo/60);let seg=String(s.tempo%60).padStart(2,'0');document.getElementById('tempo').innerText=min+':'+seg;let total=s.total||Object.keys(s.jogadores).length;document.getElementById('vivos').innerText=total+'/30';document.getElementById('vagasTxt').innerText=total+' / 30';document.getElementById('vagasBar').style.width=(total/30*100)+'%';document.getElementById('restamTxt').innerText='Restam '+s.restam+' perguntas novas';let arena=document.getElementById('arena');arena.innerHTML='';Object.values(s.jogadores).forEach(j=>{let d=document.createElement('div');d.className='player'+(j.nome===meuNome?' eu':'');d.style.left=(j.x/800*100)+'%';d.style.top=(j.y/500*100)+'%';d.innerHTML=`<div class="avatar">${j.skin}</div><div class="name">${j.nome}</div><div class="pts">⭐ ${j.pontos||0}</div><div class="acertos">✅ ${j.acertos||0} acertos</div>`;arena.appendChild(d)});let eu=Object.values(s.jogadores).find(j=>j.nome===meuNome);if(eu){document.getElementById('meusPontos').innerText=`⭐ ${eu.pontos} PTS • ✅ ${eu.acertos} acertos`}document.getElementById('feed').innerHTML=s.feed.map(f=>`<div class="feed-item">${f}</div>`).join('')});
 </script></body></html>
