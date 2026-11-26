@@ -142,4 +142,4 @@ io.on('connection',socket=>{
   socket.on('disconnect',()=>{if(jogadores[socket.id]){feed.unshift(`👋 ${jogadores[socket.id].nome} saiu`);delete jogadores[socket.id];enviarEstado();}});
 });
 setInterval(()=>{if(iniciado&&tempo>0){tempo--;if(tempo===0){iniciado=false;let ranking=Object.values(jogadores).sort((a,b)=>b.pontos-a.pontos||b.acertos-a.acertos).slice(0,3);io.emit('podio',ranking);}}enviarEstado();},1000);
-let PORT=process.env.PORT||3000;http.listen(PORT,()=>console.log('PEGA E RESPONDE v8 - TURMA + SOLO - porta '+PORT));
+let PORT=process.env.PORT||3000;http.listen(PORT,()=>console.log('PEGA E RESPONDE v9 - SEM REPETIR - porta '+PORT));
